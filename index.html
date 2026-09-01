@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#ea580c">
+<title>Diego Fox — Mesmo Tarde | Cifras Oficiais</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --primary: #ea580c;
+    --primary-hover: #c2410c;
+    --primary-light: #fff7ed;
+    --primary-border: #fed7aa;
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-nav: #0f172a;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-chord: #ea580c;
+    --border-color: #e2e8f0;
+    --tag-bg: #e0f2fe;
+    --tag-text: #0284c7;
+    --tag-border: #0284c7;
+    --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] {
+    --bg-page: #0b0f19;
+    --bg-card: #151c2e;
+    --bg-nav: #090d16;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-chord: #fb923c;
+    --border-color: #242f49;
+    --tag-bg: #102a45;
+    --tag-text: #38bdf8;
+    --tag-border: #38bdf8;
+    --primary-light: #2c1a0e;
+    --primary-border: #85370d;
+    --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+/* Top Navigation */
+.navbar {
+    background: var(--bg-nav);
+    color: #ffffff;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-badge {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 900;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.brand-info h1 {
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.brand-info p {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #ffffff;
+}
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-icon {
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #334155;
+    padding: 6px 10px;
+}
+.btn-icon:hover {
+    background: #334155;
+}
+
+/* Mobile Song Horizontal Selector Carousel */
+.mobile-selector-bar {
+    display: none;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 12px;
+    overflow-x: auto;
+    white-space: nowrap;
+    position: sticky;
+    top: 57px;
+    z-index: 90;
+    gap: 8px;
+    scrollbar-width: none;
+}
+.mobile-selector-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.mobile-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--bg-page);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mobile-pill.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.mobile-pill .pill-tom {
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--bg-card);
+    color: var(--primary);
+    border: 1px solid var(--primary-border);
+}
+
+/* Main App Layout */
+.app-container {
+    max-width: 1240px;
+    margin: 16px auto;
+    padding: 0 16px;
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    flex: 1;
+}
+
+/* Desktop Sidebar */
+.sidebar {
+    width: 270px;
+    flex-shrink: 0;
+}
+
+.tracklist-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    position: sticky;
+    top: 75px;
+}
+
+.tracklist-title {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+}
+
+.track-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 6px;
+    transition: all 0.15s ease;
+    border: 1.5px solid transparent;
+}
+
+.track-item:hover {
+    background: var(--bg-page);
+}
+
+.track-item.active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.track-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.track-num {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-muted);
+    width: 16px;
+}
+
+.track-item.active .track-num {
+    color: var(--primary);
+}
+
+.track-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-item.active .track-name {
+    color: var(--primary);
+}
+
+.track-tom-tag {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+    background: var(--bg-card);
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--primary-border);
+    flex-shrink: 0;
+}
+
+/* Main Sheet Panel */
+.content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* Interactive Toolbar */
+.cifra-toolbar {
+    background: var(--bg-card);
+    border-radius: 12px 12px 0 0;
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.toolbar-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tool-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.badge-tom-highlight {
+    background: var(--primary-light);
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+}
+
+.tool-control-group {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.tool-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.tool-btn:hover {
+    background: var(--border-color);
+}
+
+.tool-value {
+    font-size: 12px;
+    font-weight: 800;
+    padding: 0 4px;
+    color: var(--text-main);
+}
+
+/* Sheet Body */
+.sheet-card {
+    background: var(--bg-card);
+    border-radius: 0 0 12px 12px;
+    padding: 24px 28px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    font-family: 'JetBrains Mono', monospace;
+    transition: font-size 0.2s ease;
+}
+
+/* Cifra Header Inside Sheet */
+.sheet-header {
+    border-bottom: 2.5px solid var(--primary);
+    padding-bottom: 8px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.song-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+}
+
+.song-artist {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 3px;
+}
+
+.header-badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Cifra Structure */
+.desktop-grid {
+    display: flex;
+    gap: 28px;
+}
+
+.cifra-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.desktop-single {
+    display: flex;
+    flex-direction: column;
+}
+
+.section-block {
+    margin-bottom: 12px;
+    break-inside: avoid;
+}
+
+.section-tag {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.84em;
+    font-weight: 700;
+    color: var(--tag-text);
+    background: var(--tag-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    border-left: 3px solid var(--tag-border);
+    letter-spacing: 0.2px;
+}
+
+.chord-line {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-weight: 700;
+    color: var(--text-chord);
+    white-space: pre;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.lyric-line {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    color: var(--text-main);
+    white-space: pre;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.chord {
+    color: var(--text-chord);
+    font-weight: 700;
+}
+
+/* Auto-Scroll Floating Control (Mobile & Desktop) */
+.autoscroll-bar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--bg-nav);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    z-index: 200;
+    font-size: 12px;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+}
+
+.autoscroll-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.speed-btn {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 900px) {
+    .app-container {
+        flex-direction: column;
+        margin: 0 auto;
+        padding: 0 10px;
+    }
+    .sidebar {
+        display: none;
+    }
+    .mobile-selector-bar {
+        display: flex;
+    }
+    .sheet-card {
+        padding: 16px 14px;
+        border-radius: 0 0 8px 8px;
+    }
+    .cifra-toolbar {
+        border-radius: 8px 8px 0 0;
+        padding: 10px 12px;
+    }
+    .desktop-grid {
+        flex-direction: column;
+        gap: 0;
+    }
+    .song-title {
+        font-size: 20px;
+    }
+    .sheet-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .chord-line, .lyric-line {
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+}
+
+@media print {
+    .navbar, .mobile-selector-bar, .sidebar, .cifra-toolbar, .autoscroll-bar {
+        display: none !important;
+    }
+    .app-container {
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+    }
+    .sheet-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+}
+</style>
+</head>
+<body data-theme="light">
+
+<!-- Navbar -->
+<header class="navbar">
+    <div class="brand-wrapper">
+        <span class="logo-badge">CIFRA CLUB</span>
+        <div class="brand-info">
+            <h1>Diego Fox — Mesmo Tarde</h1>
+            <p>Caderno Oficial de Cifras</p>
+        </div>
+    </div>
+    <div class="nav-actions">
+        <button id="btnThemeToggle" class="btn btn-icon" title="Alternar Modo Escuro / Claro">🌙</button>
+        <a href="DIEGO%20FOX%20-%20MESMO%20TARDE%20-%20TODAS%20AS%20CIFRAS.pdf" target="_blank" class="btn btn-primary" title="Baixar Álbum Completo em PDF">
+            📄 <span class="hide-mobile">Baixar</span> PDF
+        </a>
+    </div>
+</header>
+
+<!-- Mobile Horizontal Song Selector -->
+<div class="mobile-selector-bar" id="mobileTrackList"></div>
+
+<div class="app-container">
+    <!-- Desktop Sidebar -->
+    <aside class="sidebar">
+        <div class="tracklist-card">
+            <div class="tracklist-title">Músicas do Álbum</div>
+            <div id="desktopTrackList"></div>
+        </div>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <main class="content-area">
+        <!-- Interactive Toolbar -->
+        <div class="cifra-toolbar">
+            <div class="toolbar-section">
+                <!-- Tom Badge & Transpose -->
+                <div class="tool-badge badge-tom-highlight">
+                    Tom: <strong id="curTomDisplay">--</strong>
+                </div>
+                <div class="tool-control-group" title="Transpor Tom">
+                    <button class="tool-btn" onclick="transpose(-1)" title="Diminuir meio tom">♭ -1</button>
+                    <span class="tool-btn tool-value" id="transposeOffset">0</span>
+                    <button class="tool-btn" onclick="transpose(1)" title="Aumentar meio tom">♯ +1</button>
+                </div>
+                <!-- BPM Badge -->
+                <div class="tool-badge">
+                    BPM: <strong id="curBpmDisplay">--</strong>
+                </div>
+            </div>
+            
+            <div class="toolbar-section">
+                <!-- Font Size Adjuster -->
+                <div class="tool-control-group" title="Tamanho do Texto">
+                    <button class="tool-btn" onclick="adjustFontSize(-1)">A-</button>
+                    <button class="tool-btn" onclick="adjustFontSize(1)">A+</button>
+                </div>
+                <!-- Action Buttons -->
+                <button onclick="window.print()" class="btn btn-icon" title="Imprimir esta Cifra">🖨️</button>
+                <a id="btnSinglePdf" href="#" target="_blank" class="btn btn-icon" title="Baixar PDF Individual desta Faixa">
+                    ⬇️ PDF
+                </a>
+            </div>
+        </div>
+        
+        <!-- Cifra Card Sheet -->
+        <div class="sheet-card" id="sheetContainer" style="font-size: 13px;">
+            <div class="sheet-header">
+                <div>
+                    <div class="song-title" id="songTitle">--</div>
+                    <div class="song-artist" id="songArtist">--</div>
+                </div>
+                <div class="header-badges">
+                    <div class="tool-badge badge-tom-highlight" id="headerTomBadge">--</div>
+                    <div class="tool-badge" id="headerBpmBadge">--</div>
+                </div>
+            </div>
+            
+            <div id="cifraBody"></div>
+        </div>
+    </main>
+</div>
+
+<!-- Floating Auto-Scroll Controls -->
+<div class="autoscroll-bar">
+    <button class="autoscroll-btn" id="btnAutoScroll" onclick="toggleAutoScroll()" title="Iniciar Rolagem Automática">▶</button>
+    <span id="scrollStatus">Auto-Rolagem</span>
+    <button class="speed-btn" onclick="changeScrollSpeed()">1x</button>
+</div>
+
+<script>
+const songs = [{"id": "01_do_azul", "title": "Do Azul", "artist": "Diego Fox", "album": "Mesmo Tarde", "tom": "G", "tom_ext": "Sol Maior", "bpm": "86", "pdf": "DO AZUL - CIFRA.pdf", "mobile_html": "<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>  <b class=\"chord\">Em</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">G7</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>         <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> O céu, E o mar</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>              <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> São azuis, São iguais</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>           <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Vida, Escute querida</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>                             <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Estou de saída, Não sei se vou voltar</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>           <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Algo me guia, Na direção do horizonte</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>           <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Para ver o fim do mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>           <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Algo me leva, Pelas montanhas</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>                <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Além de um céu eu vou chegar</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Terceira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>         <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Será que devo, Pensar em ti</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>         <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Eu tenho medo, De não existir</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>         <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> O seu amor, Perante a mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>           <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Tanto desejo, Dentro de mim</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Quarta Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>           <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Se não acordo, É porque não sonho</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>               <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Não tem sentido, Para estar aqui</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>          <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Mas se acordo, É porque te sinto</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>                   <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Me dá um bom motivo, Pro dia ser feliz</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Final]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>          <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Mas e o amor, o que será?</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>      <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Devo buscar?</div>\n</div>", "desktop_html": "<div class=\"desktop-grid\">\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>  <b class=\"chord\">Em</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">G7</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>         <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> O céu, E o mar</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>              <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> São azuis, São iguais</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>           <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Vida, Escute querida</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>                             <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Estou de saída, Não sei se vou voltar</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>           <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Algo me guia, Na direção do horizonte</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>           <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Para ver o fim do mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>           <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Algo me leva, Pelas montanhas</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>                <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Além de um céu eu vou chegar</div>\n</div>\n    </div>\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Terceira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>         <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Será que devo, Pensar em ti</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>         <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Eu tenho medo, De não existir</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>         <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> O seu amor, Perante a mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>           <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Tanto desejo, Dentro de mim</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Quarta Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>           <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Se não acordo, É porque não sonho</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>               <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Não tem sentido, Para estar aqui</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>          <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Mas se acordo, É porque te sinto</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>                   <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Me dá um bom motivo, Pro dia ser feliz</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Final]</div>\n<div class=\"chord-line\"><b class=\"chord\">G7</b>          <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Mas e o amor, o que será?</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>      <b class=\"chord\">G7</b></div>\n<div class=\"lyric-line\"> Devo buscar?</div>\n</div>\n    </div>\n</div>"}, {"id": "02_tao_facil_assim", "title": "Tão Fácil Assim", "artist": "Diego Fox", "album": "Mesmo Tarde", "tom": "Em", "tom_ext": "Mi Menor", "bpm": "79", "pdf": "TAO FACIL ASSIM - CIFRA.pdf", "mobile_html": "<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">C7</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">Em</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>             <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Todo meu amor por ti</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>                 <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Estava sempre posto aí</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>            <b class=\"chord\">Em</b>           <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Preferiu se aventurar em um outro dia</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>            <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Toda uma paixão por mim</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>                 <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Chegou mesmo a existir?</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>            <b class=\"chord\">Em</b>           <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Preferiu se enganar em uma fantasia</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> Tão fácil assim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Lembra de mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>      <b class=\"chord\">C</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> É fácil sim</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Interlúdio]</div>\n<div class=\"chord-line\"><b class=\"chord\">C7</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">Em</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>                 <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Mas quando a noite vem</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>                 <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Teu nome grita em mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>          <b class=\"chord\">Em</b>              <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> No silêncio que ficou de um novo dia</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>               <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Se o tempo te levar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>             <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Eu ainda vou tentar</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>          <b class=\"chord\">Em</b>            <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Te encontrar onde parou naquele dia</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>         <b class=\"chord\">Em</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> Oh, tão fácil assim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Lembra de mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>      <b class=\"chord\">C</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> É fácil sim</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Interlúdio]</div>\n<div class=\"chord-line\"><b class=\"chord\">C7</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">Em</b></div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>   <b class=\"chord\">Em</b>  <b class=\"chord\">G</b>   <b class=\"chord\">Bm7</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Terceira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>                <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Mas quando o céu cair</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>               <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> E o vento me tocar</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>          <b class=\"chord\">Em</b>             <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> E eu puder daqui ouvir tua poesia</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> Tão fácil assim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Lembra de mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>      <b class=\"chord\">C</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> É fácil sim</div>\n</div>", "desktop_html": "<div class=\"desktop-grid\">\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">C7</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">Em</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>             <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Todo meu amor por ti</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>                 <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Estava sempre posto aí</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>            <b class=\"chord\">Em</b>           <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Preferiu se aventurar em um outro dia</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>            <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Toda uma paixão por mim</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>                 <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Chegou mesmo a existir?</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>            <b class=\"chord\">Em</b>           <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Preferiu se enganar em uma fantasia</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> Tão fácil assim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Lembra de mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>      <b class=\"chord\">C</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> É fácil sim</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Interlúdio]</div>\n<div class=\"chord-line\"><b class=\"chord\">C7</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">Em</b></div>\n</div>\n    </div>\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>                 <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Mas quando a noite vem</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>                 <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Teu nome grita em mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>          <b class=\"chord\">Em</b>              <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> No silêncio que ficou de um novo dia</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>               <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Se o tempo te levar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>             <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Eu ainda vou tentar</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>          <b class=\"chord\">Em</b>            <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Te encontrar onde parou naquele dia</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>         <b class=\"chord\">Em</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> Oh, tão fácil assim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Lembra de mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>      <b class=\"chord\">C</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> É fácil sim</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Interlúdio]</div>\n<div class=\"chord-line\"><b class=\"chord\">C7</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">Em</b></div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>   <b class=\"chord\">Em</b>  <b class=\"chord\">G</b>   <b class=\"chord\">Bm7</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Terceira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>                <b class=\"chord\">Em</b></div>\n<div class=\"lyric-line\"> Mas quando o céu cair</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>               <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> E o vento me tocar</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>          <b class=\"chord\">Em</b>             <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> E eu puder daqui ouvir tua poesia</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> Tão fácil assim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>        <b class=\"chord\">Em</b>    <b class=\"chord\">Bm7</b></div>\n<div class=\"lyric-line\"> Lembra de mim</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b>      <b class=\"chord\">C</b>    <b class=\"chord\">G</b></div>\n<div class=\"lyric-line\"> É fácil sim</div>\n</div>\n    </div>\n</div>"}, {"id": "03_um_lugar_so", "title": "Um Lugar Só", "artist": "Diego Fox", "album": "Mesmo Tarde", "tom": "D", "tom_ext": "Ré Maior", "bpm": "130", "pdf": "UM LUGAR SO - CIFRA.pdf", "mobile_html": "<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>  <b class=\"chord\">D</b>  <b class=\"chord\">Am7</b>  <b class=\"chord\">D</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>                      <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Um lugar só, uhuuuuuuuu. Um lugar só, uhuuuuuuuu...</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>                             <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Eu não faço nem ideia se você ainda quer saber de mim</div>\n<div class=\"chord-line\">                                             <b class=\"chord\">Am7</b>       <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">E nem mesmo se tua casa cabe uma lembrança qualquer de mim</div>\n<div class=\"chord-line\">              <b class=\"chord\">Am7</b>  <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">De verdade, de verdade</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>                           <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Tu que sempre me chamou pra perto desse mundo</div>\n<div class=\"chord-line\">                            <b class=\"chord\">Am7</b>      <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Mudo que eu fiquei quando não me identifiquei</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Ponte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>        <b class=\"chord\">B7</b>        <b class=\"chord\">C7</b>       <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Mas sei que procurei você</div>\n<div class=\"chord-line\">                  <b class=\"chord\">Am7</b>    <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Em todo canto que fiquei</div>\n<div class=\"chord-line\">                                  <b class=\"chord\">Am7</b></div>\n<div class=\"lyric-line\">E tudo o que eu queria era apenas um</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>                      <b class=\"chord\">D</b>                          <b class=\"chord\">Am7</b>  <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Um lugar só, uhuuuuuuuu. Um lugar só, uhuuuuuuuu...</div>\n</div>", "desktop_html": "<div class=\"desktop-single\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>  <b class=\"chord\">D</b>  <b class=\"chord\">Am7</b>  <b class=\"chord\">D</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>                      <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Um lugar só, uhuuuuuuuu. Um lugar só, uhuuuuuuuu...</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>                             <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Eu não faço nem ideia se você ainda quer saber de mim</div>\n<div class=\"chord-line\">                                             <b class=\"chord\">Am7</b>       <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">E nem mesmo se tua casa cabe uma lembrança qualquer de mim</div>\n<div class=\"chord-line\">              <b class=\"chord\">Am7</b>  <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">De verdade, de verdade</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>                           <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Tu que sempre me chamou pra perto desse mundo</div>\n<div class=\"chord-line\">                            <b class=\"chord\">Am7</b>      <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Mudo que eu fiquei quando não me identifiquei</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Ponte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>        <b class=\"chord\">B7</b>        <b class=\"chord\">C7</b>       <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Mas sei que procurei você</div>\n<div class=\"chord-line\">                  <b class=\"chord\">Am7</b>    <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Em todo canto que fiquei</div>\n<div class=\"chord-line\">                                  <b class=\"chord\">Am7</b></div>\n<div class=\"lyric-line\">E tudo o que eu queria era apenas um</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">Am7</b>                      <b class=\"chord\">D</b>                          <b class=\"chord\">Am7</b>  <b class=\"chord\">D</b></div>\n<div class=\"lyric-line\">Um lugar só, uhuuuuuuuu. Um lugar só, uhuuuuuuuu...</div>\n</div>\n</div>"}, {"id": "04_mesmo_tarde", "title": "Mesmo Tarde (Melodia Para Você)", "artist": "Diego Fox", "album": "Mesmo Tarde", "tom": "Dm", "tom_ext": "Ré Menor", "bpm": "149", "pdf": "MESMO TARDE - CIFRA.pdf", "mobile_html": "<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>  <b class=\"chord\">A7</b>  <b class=\"chord\">Bb7M</b>  <b class=\"chord\">A7</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um silêncio pra lembrar</div>\n<div class=\"chord-line\">            <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\">Lembrar o que não foi, ah...</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Que a vida não entregou</div>\n<div class=\"chord-line\">            <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">Que a vida não contou</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um suspiro pra tentar</div>\n<div class=\"chord-line\">            <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">Um cortejo de um adeus</div>\n<div class=\"chord-line\">   <b class=\"chord\">F</b>       <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">E veja... Ahhh</div>\n<div class=\"chord-line\">   <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">E veja só</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Terceira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um instante pra pensar</div>\n<div class=\"chord-line\">         <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\">Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um retrato de fé no céu</div>\n<div class=\"chord-line\">       <b class=\"chord\">Gm</b>              <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Mesmo tarde pro teu amor</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Quarta Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um caminho no teu véu</div>\n<div class=\"chord-line\">         <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\">Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um caminho no céu, no céu</div>\n<div class=\"chord-line\">    <b class=\"chord\">Gm</b>                      <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Eu guardo teu gesto que ficou</div>\n<div class=\"chord-line\">              <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">E tenho só o resto que não foi</div>\n<div class=\"chord-line\">    <b class=\"chord\">F</b>                     <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">E tenho só o resto que não foi real</div>\n<div class=\"chord-line\"> <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">No mar</div>\n<div class=\"chord-line\">              <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Um silêncio no mar</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Quinta Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um motivo pra pensar</div>\n<div class=\"chord-line\">            <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">Observando um adeus</div>\n<div class=\"chord-line\"><b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Faço a paz no olhar</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um suspiro no céu</div>\n<div class=\"chord-line\"><b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Faço a paz no mar</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um cortejo no céu</div>\n<div class=\"chord-line\">      <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">Eu.... No mar</div>\n<div class=\"chord-line\">              <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Um silêncio no mar</div>\n</div>", "desktop_html": "<div class=\"desktop-grid\">\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>  <b class=\"chord\">A7</b>  <b class=\"chord\">Bb7M</b>  <b class=\"chord\">A7</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um silêncio pra lembrar</div>\n<div class=\"chord-line\">            <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\">Lembrar o que não foi, ah...</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Que a vida não entregou</div>\n<div class=\"chord-line\">            <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">Que a vida não contou</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um suspiro pra tentar</div>\n<div class=\"chord-line\">            <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">Um cortejo de um adeus</div>\n<div class=\"chord-line\">   <b class=\"chord\">F</b>       <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">E veja... Ahhh</div>\n<div class=\"chord-line\">   <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">E veja só</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Terceira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um instante pra pensar</div>\n<div class=\"chord-line\">         <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\">Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um retrato de fé no céu</div>\n<div class=\"chord-line\">       <b class=\"chord\">Gm</b>              <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Mesmo tarde pro teu amor</div>\n</div>\n    </div>\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Quarta Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um caminho no teu véu</div>\n<div class=\"chord-line\">         <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\">Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um caminho no céu, no céu</div>\n<div class=\"chord-line\">    <b class=\"chord\">Gm</b>                      <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Eu guardo teu gesto que ficou</div>\n<div class=\"chord-line\">              <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">E tenho só o resto que não foi</div>\n<div class=\"chord-line\">    <b class=\"chord\">F</b>                     <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">E tenho só o resto que não foi real</div>\n<div class=\"chord-line\"> <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">No mar</div>\n<div class=\"chord-line\">              <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Um silêncio no mar</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Quinta Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">Bb7M</b>           <b class=\"chord\">A7</b></div>\n<div class=\"lyric-line\"> Ah, Deus dará</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um motivo pra pensar</div>\n<div class=\"chord-line\">            <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">Observando um adeus</div>\n<div class=\"chord-line\"><b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Faço a paz no olhar</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um suspiro no céu</div>\n<div class=\"chord-line\"><b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Faço a paz no mar</div>\n<div class=\"chord-line\">            <b class=\"chord\">Bb7M</b></div>\n<div class=\"lyric-line\">Um cortejo no céu</div>\n<div class=\"chord-line\">      <b class=\"chord\">Gm</b></div>\n<div class=\"lyric-line\">Eu.... No mar</div>\n<div class=\"chord-line\">              <b class=\"chord\">F</b></div>\n<div class=\"lyric-line\">Um silêncio no mar</div>\n</div>\n    </div>\n</div>"}, {"id": "05_entre", "title": "Entre", "artist": "Diego Fox", "album": "Mesmo Tarde", "tom": "G", "tom_ext": "Sol Maior", "bpm": "124", "pdf": "ENTRE - CIFRA.pdf", "mobile_html": "<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>  <b class=\"chord\">Bm</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">G</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Tem dias que a rua se abre</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Em duas direções</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Uma segue calma</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Outra segue o coração</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">O tempo não responde</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Só muda o tom da luz</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">E eu sigo em silêncio</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Onde o peito me conduz</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Já fiz escolhas por medo</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Já confiei na razão</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Mas toda vez que eu nego</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">O amor volta em canção</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Um diz fica, o outro vai</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um na varanda, o outro no mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde ancorar</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">E o amor chega e não pede paz</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um é varanda, outro é mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde embarcar</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Tem dias que a rua se abre</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Em duas direções</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Uma pede calma</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Outra pede o coração</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Um me vê como eu sou</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Sem pedir explicação</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Outro me mostra o mundo</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E me tira os pés do chão</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Um diz fica, o outro vai</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um pede casa, o outro quer mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde ancorar</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">E o amor chega e não pede paz</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um na varanda, outro no mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde embarcar</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Um diz fica, o outro vai</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um pede casa, o outro quer mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde ancorar</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">E o amor chega e não pede paz</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um é varanda, outro é mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde embarcar</div>\n</div>", "desktop_html": "<div class=\"desktop-grid\">\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b>  <b class=\"chord\">Bm</b>  <b class=\"chord\">Am</b>  <b class=\"chord\">G</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Tem dias que a rua se abre</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Em duas direções</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Uma segue calma</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Outra segue o coração</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">O tempo não responde</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Só muda o tom da luz</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">E eu sigo em silêncio</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Onde o peito me conduz</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Já fiz escolhas por medo</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Já confiei na razão</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Mas toda vez que eu nego</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">O amor volta em canção</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Um diz fica, o outro vai</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um na varanda, o outro no mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde ancorar</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">E o amor chega e não pede paz</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um é varanda, outro é mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde embarcar</div>\n</div>\n    </div>\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Tem dias que a rua se abre</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Em duas direções</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Uma pede calma</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Outra pede o coração</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Um me vê como eu sou</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Sem pedir explicação</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Outro me mostra o mundo</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E me tira os pés do chão</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Um diz fica, o outro vai</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um pede casa, o outro quer mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde ancorar</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">E o amor chega e não pede paz</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um na varanda, outro no mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde embarcar</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">Um diz fica, o outro vai</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um pede casa, o outro quer mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde ancorar</div>\n<div class=\"chord-line\">&nbsp;</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">Eu tô de novo entre dois sinais</div>\n<div class=\"chord-line\"><b class=\"chord\">Bm</b></div>\n<div class=\"lyric-line\">E o amor chega e não pede paz</div>\n<div class=\"chord-line\"><b class=\"chord\">Am</b></div>\n<div class=\"lyric-line\">Um é varanda, outro é mar</div>\n<div class=\"chord-line\"><b class=\"chord\">G</b></div>\n<div class=\"lyric-line\">E eu não sei onde embarcar</div>\n</div>\n    </div>\n</div>"}, {"id": "06_todo_domingo", "title": "Todo Domingo", "artist": "Diego Fox", "album": "Mesmo Tarde", "tom": "B", "tom_ext": "Si Maior", "bpm": "127", "pdf": "TODO DOMINGO - CIFRA.pdf", "mobile_html": "<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>  <b class=\"chord\">E</b></div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>  <b class=\"chord\">C#m</b>  <b class=\"chord\">D#m</b>  <b class=\"chord\">E</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>           <b class=\"chord\">D#m</b>    <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">A tarde eu vou bater meus pés no céu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>          <b class=\"chord\">D#m</b>   <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">Até o amanhecer deitar no véu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>           <b class=\"chord\">D#m</b>    <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">A tarde eu vou bater meus pés no céu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>          <b class=\"chord\">D#m</b>   <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">Até o amanhecer deitar no véu</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b>   <b class=\"chord\">B</b></div>\n<div class=\"lyric-line\"> Dessa noite</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b>   <b class=\"chord\">B</b></div>\n<div class=\"lyric-line\"> Pra depois</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b>   <b class=\"chord\">B</b></div>\n<div class=\"lyric-line\"> Eu seguir</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b>   <b class=\"chord\">B</b></div>\n<div class=\"lyric-line\"> Onde for</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Ponte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>            <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> E de ponta abaixo nada vou levar</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Apenas nosso amor foi o que ficou</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b></div>\n<div class=\"lyric-line\"> Onde for...</div>\n<div class=\"chord-line\"><b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Com quem for...</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas todo domingo Moça moça</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Volta, volta, Deixa, deixa como está</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Todo domingo Moça moça</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Volta, volta, Deixa, deixa como está</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Terceira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Que acendo uma vela</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixo uma prece</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>       <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas o que eu peço a Deus</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>            <b class=\"chord\">C#m</b>           <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> É que eu tenha calma... Aí ahhhhh</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Todo domingo Moça moça</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Volta, volta, Deixa, deixa como está</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Todo domingo Moça moça</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Volta, volta, Deixa, deixa como está</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Quarta Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Que acendo uma vela</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixo uma prece</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>       <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas o que eu peço a Deus</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>            <b class=\"chord\">C#m</b>           <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> É que eu tenha calma... Aí ahhhhh</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Ponte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>       <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas o que eu peço a Deus</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>            <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> É que eu tenha calma....</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>       <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas o que eu peço a Deus</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>           <b class=\"chord\">C#m</b>      <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Que eu tenha calma....</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Pós-Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixa deixa deixa deixa deixa deixa deixa</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixa deixa deixa deixa deixa deixa deixa</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixa deixa deixa deixa deixa deixa deixa</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Final]</div>\n<div class=\"chord-line\"><b class=\"chord\">C#m</b>    <b class=\"chord\">D#m</b>           <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">A tarde eu vou bater meus pés no céu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>          <b class=\"chord\">D#m</b>   <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">Até o amanhecer deitar no véu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>  <b class=\"chord\">D#m</b>  <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">A tarde eu vou... [Riff de Guitarra]</div>\n</div>", "desktop_html": "<div class=\"desktop-grid\">\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Intro]</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>  <b class=\"chord\">E</b></div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>  <b class=\"chord\">C#m</b>  <b class=\"chord\">D#m</b>  <b class=\"chord\">E</b></div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Primeira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>           <b class=\"chord\">D#m</b>    <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">A tarde eu vou bater meus pés no céu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>          <b class=\"chord\">D#m</b>   <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">Até o amanhecer deitar no véu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>           <b class=\"chord\">D#m</b>    <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">A tarde eu vou bater meus pés no céu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>          <b class=\"chord\">D#m</b>   <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">Até o amanhecer deitar no véu</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Segunda Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b>   <b class=\"chord\">B</b></div>\n<div class=\"lyric-line\"> Dessa noite</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b>   <b class=\"chord\">B</b></div>\n<div class=\"lyric-line\"> Pra depois</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b>   <b class=\"chord\">B</b></div>\n<div class=\"lyric-line\"> Eu seguir</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b>   <b class=\"chord\">B</b></div>\n<div class=\"lyric-line\"> Onde for</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Ponte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>            <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> E de ponta abaixo nada vou levar</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>       <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Apenas nosso amor foi o que ficou</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b></div>\n<div class=\"lyric-line\"> Onde for...</div>\n<div class=\"chord-line\"><b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Com quem for...</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas todo domingo Moça moça</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Volta, volta, Deixa, deixa como está</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Todo domingo Moça moça</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Volta, volta, Deixa, deixa como está</div>\n</div>\n    </div>\n    <div class=\"cifra-col\">\n<div class=\"section-block\">\n<div class=\"section-tag\">[Terceira Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Que acendo uma vela</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixo uma prece</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>       <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas o que eu peço a Deus</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>            <b class=\"chord\">C#m</b>           <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> É que eu tenha calma... Aí ahhhhh</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Todo domingo Moça moça</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Volta, volta, Deixa, deixa como está</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Todo domingo Moça moça</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>             <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Volta, volta, Deixa, deixa como está</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Quarta Parte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Que acendo uma vela</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>   <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixo uma prece</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>       <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas o que eu peço a Deus</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>            <b class=\"chord\">C#m</b>           <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> É que eu tenha calma... Aí ahhhhh</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Ponte]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>       <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas o que eu peço a Deus</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>            <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> É que eu tenha calma....</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>        <b class=\"chord\">C#m</b>       <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Mas o que eu peço a Deus</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>           <b class=\"chord\">C#m</b>      <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Que eu tenha calma....</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Pós-Refrão]</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixa deixa deixa deixa deixa deixa deixa</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixa deixa deixa deixa deixa deixa deixa</div>\n<div class=\"chord-line\"><b class=\"chord\">E</b>      <b class=\"chord\">C#m</b>     <b class=\"chord\">G#m</b></div>\n<div class=\"lyric-line\"> Deixa deixa deixa deixa deixa deixa deixa</div>\n</div>\n<div class=\"section-block\">\n<div class=\"section-tag\">[Final]</div>\n<div class=\"chord-line\"><b class=\"chord\">C#m</b>    <b class=\"chord\">D#m</b>           <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">A tarde eu vou bater meus pés no céu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>          <b class=\"chord\">D#m</b>   <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">Até o amanhecer deitar no véu</div>\n<div class=\"chord-line\"><b class=\"chord\">B</b>      <b class=\"chord\">C#m</b>  <b class=\"chord\">D#m</b>  <b class=\"chord\">E</b></div>\n<div class=\"lyric-line\">A tarde eu vou... [Riff de Guitarra]</div>\n</div>\n    </div>\n</div>"}];
+let currentSongIndex = 0;
+let currentTranspose = 0;
+let currentFontSize = 13;
+let isScrolling = false;
+let scrollInterval = null;
+let scrollSpeed = 1; // 1, 2, 3
+
+const chromaticScaleSharp = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const chromaticScaleFlat  = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+
+function transposeNote(note, semitones) {
+    let scale = chromaticScaleSharp;
+    if (note.includes("b") || note === "F" || note === "Bb" || note === "Eb") {
+        scale = chromaticScaleFlat;
+    }
+    let idx = scale.indexOf(note);
+    if (idx === -1) {
+        // Check alternate
+        let altScale = (scale === chromaticScaleSharp) ? chromaticScaleFlat : chromaticScaleSharp;
+        idx = altScale.indexOf(note);
+    }
+    if (idx === -1) return note;
+    let newIdx = (idx + semitones) % 12;
+    if (newIdx < 0) newIdx += 12;
+    return scale[newIdx];
+}
+
+function transposeChordString(chordStr, semitones) {
+    if (semitones === 0) return chordStr;
+    const chordRegex = /([A-G][b#]?)/g;
+    return chordStr.replace(chordRegex, (m) => transposeNote(m, semitones));
+}
+
+function renderTrackLists() {
+    const desktopEl = document.getElementById('desktopTrackList');
+    const mobileEl = document.getElementById('mobileTrackList');
+    
+    desktopEl.innerHTML = '';
+    mobileEl.innerHTML = '';
+    
+    songs.forEach((song, idx) => {
+        // Desktop
+        const dItem = document.createElement('div');
+        dItem.className = 'track-item ' + (idx === currentSongIndex ? 'active' : '');
+        dItem.onclick = () => selectSong(idx);
+        dItem.innerHTML = `
+            <div class="track-left">
+                <span class="track-num">${String(idx + 1).padStart(2, '0')}</span>
+                <span class="track-name">${song.title}</span>
+            </div>
+            <span class="track-tom-tag">${song.tom}</span>
+        `;
+        desktopEl.appendChild(dItem);
+        
+        // Mobile
+        const mItem = document.createElement('div');
+        mItem.className = 'mobile-pill ' + (idx === currentSongIndex ? 'active' : '');
+        mItem.onclick = () => {
+            selectSong(idx);
+            mItem.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        };
+        mItem.innerHTML = `
+            <span>${idx + 1}. ${song.title}</span>
+            <span class="pill-tom">${song.tom}</span>
+        `;
+        mobileEl.appendChild(mItem);
+    });
+}
+
+function selectSong(index) {
+    currentSongIndex = index;
+    currentTranspose = 0;
+    document.getElementById('transposeOffset').innerText = '0';
+    renderTrackLists();
+    updateSongView();
+}
+
+function updateSongView() {
+    const song = songs[currentSongIndex];
+    const isMobile = window.innerWidth <= 900;
+    
+    // Transposed Tom
+    const currentBaseTom = song.tom.split(" ")[0]; // e.g. "G", "Em", "Bb7M", "Dm"
+    const rootNoteMatch = currentBaseTom.match(/^[A-G][b#]?/);
+    let displayTom = song.tom;
+    if (rootNoteMatch && currentTranspose !== 0) {
+        const root = rootNoteMatch[0];
+        const rest = currentBaseTom.slice(root.length);
+        displayTom = transposeNote(root, currentTranspose) + rest;
+    }
+    
+    document.getElementById('songTitle').innerText = song.title;
+    document.getElementById('songArtist').innerText = `${song.artist} • Álbum: ${song.album}`;
+    
+    document.getElementById('curTomDisplay').innerText = displayTom;
+    document.getElementById('headerTomBadge').innerHTML = `Tom: <strong>${displayTom}</strong>`;
+    
+    document.getElementById('curBpmDisplay').innerText = song.bpm;
+    document.getElementById('headerBpmBadge').innerHTML = `BPM: <strong>${song.bpm}</strong>`;
+    
+    document.getElementById('btnSinglePdf').href = encodeURIComponent(song.pdf);
+    
+    // Render content
+    let rawHtml = isMobile ? song.mobile_html : song.desktop_html;
+    
+    // Apply transposition if != 0
+    if (currentTranspose !== 0) {
+        // Replace all <b class="chord">...</b>
+        rawHtml = rawHtml.replace(/<b class="chord">([^<]+)<\/b>/g, (match, chordText) => {
+            return `<b class="chord">${transposeChordString(chordText, currentTranspose)}</b>`;
+        });
+    }
+    
+    document.getElementById('cifraBody').innerHTML = rawHtml;
+}
+
+function transpose(step) {
+    currentTranspose += step;
+    let sign = currentTranspose > 0 ? '+' : '';
+    document.getElementById('transposeOffset').innerText = sign + currentTranspose;
+    updateSongView();
+}
+
+function adjustFontSize(delta) {
+    currentFontSize = Math.max(10, Math.min(22, currentFontSize + delta));
+    document.getElementById('sheetContainer').style.fontSize = currentFontSize + 'px';
+}
+
+// Auto Scroll Engine
+function toggleAutoScroll() {
+    isScrolling = !isScrolling;
+    const btn = document.getElementById('btnAutoScroll');
+    const status = document.getElementById('scrollStatus');
+    
+    if (isScrolling) {
+        btn.innerText = '⏸';
+        btn.style.background = '#22c55e';
+        status.innerText = 'Rolando...';
+        startScrolling();
+    } else {
+        btn.innerText = '▶';
+        btn.style.background = 'var(--primary)';
+        status.innerText = 'Auto-Rolagem';
+        stopScrolling();
+    }
+}
+
+function startScrolling() {
+    stopScrolling();
+    const intervalTime = 40 / scrollSpeed;
+    scrollInterval = setInterval(() => {
+        window.scrollBy({ top: 1, left: 0, behavior: 'smooth' });
+        // Check if reached bottom
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+            toggleAutoScroll();
+        }
+    }, intervalTime);
+}
+
+function stopScrolling() {
+    if (scrollInterval) {
+        clearInterval(scrollInterval);
+        scrollInterval = null;
+    }
+}
+
+function changeScrollSpeed() {
+    const speeds = [1, 2, 3];
+    let nextIdx = (speeds.indexOf(scrollSpeed) + 1) % speeds.length;
+    scrollSpeed = speeds[nextIdx];
+    event.target.innerText = scrollSpeed + 'x';
+    if (isScrolling) {
+        startScrolling();
+    }
+}
+
+// Theme Toggle (Dark/Light)
+const btnTheme = document.getElementById('btnThemeToggle');
+btnTheme.addEventListener('click', () => {
+    const currentTheme = document.body.getAttribute('data-theme');
+    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.body.setAttribute('data-theme', nextTheme);
+    btnTheme.innerText = nextTheme === 'dark' ? '☀️' : '🌙';
+});
+
+// Window resize listener
+window.addEventListener('resize', () => {
+    updateSongView();
+});
+
+// Init
+renderTrackLists();
+selectSong(0);
+</script>
+</body>
+</html>
