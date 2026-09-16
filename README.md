@@ -1,7 +1,7 @@
 # Diego Fox — Mesmo Tarde 🎵
 ### Caderno Oficial de Cifras e Letras (Estilo Cifra Club)
 
-Página web responsiva com as cifras e letras de todas as 6 faixas do álbum **Mesmo Tarde** do artista **Diego Fox**.
+Página web responsiva com as cifras e letras de todas as 7 faixas do álbum **Mesmo Tarde** do artista **Diego Fox**.
 
 ---
 
@@ -24,8 +24,9 @@ Página web responsiva com as cifras e letras de todas as 6 faixas do álbum **M
 | **04** | **Mesmo Tarde** *(Melodia Para Você)* | **Tom: Dm** *(Ré Menor)* | 149 | [PDF](MESMO%20TARDE%20-%20CIFRA.pdf) |
 | **05** | **Entre** | **Tom: G** *(Sol Maior)* | 124 | [PDF](ENTRE%20-%20CIFRA.pdf) |
 | **06** | **Todo Domingo** | **Tom: B** *(Si Maior)* | 127 | [PDF](TODO%20DOMINGO%20-%20CIFRA.pdf) |
+| **07** | **Vamos** | **Tom: D** *(Ré Maior)* | 92 | [PDF](VAMOS%20-%20CIFRA.pdf) |
 
-- 📚 **[Baixar Álbum Completo em PDF (6 Páginas)](DIEGO%20FOX%20-%20MESMO%20TARDE%20-%20TODAS%20AS%20CIFRAS.pdf)**
+- 📚 **[Baixar Álbum Completo em PDF (7 Páginas)](DIEGO%20FOX%20-%20MESMO%20TARDE%20-%20TODAS%20AS%20CIFRAS.pdf)**
 
 ---
 
