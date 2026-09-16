@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Estou Aqui - Diego Fox (Cifra Club)</title>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+@page {
+    size: A4 portrait;
+    margin: 8mm 12mm 8mm 12mm;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'JetBrains Mono', 'Roboto Mono', 'Consolas', 'Courier New', monospace;
+    background: #ffffff;
+    color: #1e293b;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.page-container {
+    width: 100%;
+    max-width: 190mm;
+    margin: 0 auto;
+    padding: 0;
+    page-break-after: always;
+    page-break-inside: avoid;
+    height: 279mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.page-container:last-child {
+    page-break-after: avoid;
+}
+
+/* Header CifraClub Style */
+.cifra-header {
+    border-bottom: 2.5px solid #ff6600;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.song-title {
+    font-size: 21px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+}
+
+.artist-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ea580c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.header-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+}
+
+.badge-tom {
+    background: #fff7ed;
+    border: 1.5px solid #fb923c;
+    color: #c2410c;
+    font-size: 12px;
+}
+
+.badge-tom strong {
+    font-size: 14px;
+    font-weight: 800;
+    color: #ea580c;
+}
+
+.badge-bpm {
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+    color: #1d4ed8;
+}
+
+/* 2-Column Grid Layout */
+.cifra-grid {
+    flex: 1;
+    display: flex;
+    gap: 24px;
+    overflow: hidden;
+}
+
+.cifra-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-block {
+    margin-bottom: 11px;
+}
+
+.section-tag {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82em;
+    font-weight: 700;
+    color: #0284c7;
+    background: #e0f2fe;
+    padding: 1px 7px;
+    border-radius: 3px;
+    margin-bottom: 3px;
+    border-left: 3px solid #0284c7;
+    letter-spacing: 0.2px;
+}
+
+.chord-line {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-weight: 700;
+    color: #ff5500;
+    white-space: pre;
+}
+
+.lyric-line {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    color: #1e293b;
+    white-space: pre;
+}
+
+.chord {
+    color: #ff5500;
+    font-weight: 700;
+}
+
+.footer-bar {
+    margin-top: 6px;
+    padding-top: 4px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+</style>
+</head>
+<body>
+<div class="page-container">
+    <div class="cifra-header">
+        <div class="header-left">
+            <div class="title-row">
+                <span class="song-title">Estou Aqui</span>
+            </div>
+            <div class="artist-name">Diego Fox • Álbum: Mesmo Tarde</div>
+        </div>
+        <div class="header-meta">
+            <div class="badge badge-tom">Tom: <strong>A</strong> (Lá Maior)</div>
+            <div class="badge badge-bpm">BPM: <strong>144</strong></div>
+        </div>
+    </div>
+    
+
+    <div class="cifra-grid" style="font-size: 11.5px; line-height: 1.38;">
+        <div class="cifra-col">
+<div class="section-block">
+<div class="section-tag">[Intro]</div>
+<div class="chord-line"><b class="chord">F#m7</b>  <b class="chord">Bm7</b>  <b class="chord">E7</b>  <b class="chord">A7M</b></div>
+</div>
+<div class="section-block">
+<div class="section-tag">[Primeira Parte]</div>
+<div class="chord-line">                             <b class="chord">Bm7</b></div>
+<div class="lyric-line">Foi preciso o mundo inteiro adoecer</div>
+<div class="chord-line"> <b class="chord">E7</b>                         <b class="chord">A7M</b></div>
+<div class="lyric-line">Pra gente enfim poder se encontrar</div>
+<div class="chord-line"> <b class="chord">F#m7</b>                       <b class="chord">Bm7</b></div>
+<div class="lyric-line">Foi preciso todo mundo se afastar</div>
+<div class="chord-line"><b class="chord">E7</b>                              <b class="chord">A7M</b></div>
+<div class="lyric-line">Pra então notar</div>
+<div class="chord-line">&nbsp;</div>
+<div class="chord-line"><b class="chord">A7M</b></div>
+<div class="lyric-line">Que aqui estou</div>
+<div class="chord-line"><b class="chord">Bm7</b>    <b class="chord">E7</b></div>
+<div class="lyric-line">E existo</div>
+<div class="chord-line"><b class="chord">A7M</b></div>
+<div class="lyric-line">Existo</div>
+</div>
+<div class="section-block">
+<div class="section-tag">[Segunda Parte]</div>
+<div class="chord-line">                             <b class="chord">Bm7</b></div>
+<div class="lyric-line">Foi preciso todo mundo se acalmar</div>
+<div class="chord-line"> <b class="chord">E7</b>                         <b class="chord">A7M</b></div>
+<div class="lyric-line">Pra só no fim então te encontrar</div>
+<div class="chord-line"> <b class="chord">F#m7</b>                       <b class="chord">Bm7</b></div>
+<div class="lyric-line">Foi preciso o Sol com a Lua se juntar</div>
+<div class="chord-line"><b class="chord">E7</b>                              <b class="chord">A7M</b></div>
+<div class="lyric-line">Pra tua boca e a minha se beijar</div>
+<div class="chord-line">&nbsp;</div>
+<div class="chord-line"><b class="chord">A7M</b></div>
+<div class="lyric-line">E aqui estou</div>
+<div class="chord-line"><b class="chord">Bm7</b>    <b class="chord">E7</b></div>
+<div class="lyric-line">E existo</div>
+<div class="chord-line"><b class="chord">A7M</b></div>
+<div class="lyric-line">Existo</div>
+</div>
+        </div>
+        <div class="cifra-col">
+<div class="section-block">
+<div class="section-tag">[Refrão]</div>
+<div class="chord-line"><b class="chord">F#m7</b>                     <b class="chord">Bm7</b></div>
+<div class="lyric-line">Não se encontra no espelho</div>
+<div class="chord-line"><b class="chord">E7</b>                       <b class="chord">A7M</b></div>
+<div class="lyric-line">Vem pra perto de mim</div>
+<div class="chord-line"><b class="chord">F#m7</b>                     <b class="chord">Bm7</b></div>
+<div class="lyric-line">Deu saudade do inferno</div>
+<div class="chord-line">                     <b class="chord">E7</b></div>
+<div class="lyric-line">Olha que me interesso</div>
+<div class="chord-line">                     <b class="chord">A7M</b>    <b class="chord">F#m7</b></div>
+<div class="lyric-line">Por qualquer descompasso teu</div>
+<div class="chord-line">&nbsp;</div>
+<div class="chord-line"><b class="chord">A7M</b></div>
+<div class="lyric-line">Estou aqui</div>
+<div class="chord-line"><b class="chord">Bm7</b>    <b class="chord">E7</b></div>
+<div class="lyric-line">E existo</div>
+<div class="chord-line"><b class="chord">A7M</b>    <b class="chord">F#m7</b></div>
+<div class="lyric-line">Existo</div>
+</div>
+<div class="section-block">
+<div class="section-tag">[Final]</div>
+<div class="chord-line"><b class="chord">Bm7</b>  <b class="chord">E7</b>  <b class="chord">A7M</b>  <b class="chord">F#m7</b></div>
+<div class="chord-line"><b class="chord">Bm7</b>  <b class="chord">E7</b>  <b class="chord">A7M</b></div>
+</div>
+        </div>
+    </div>
+    
+    <div class="footer-bar">
+        <span>Diego Fox • Álbum: Mesmo Tarde</span>
+        <span>Página 1 de 1</span>
+    </div>
+</div>
+</body>
+</html>
