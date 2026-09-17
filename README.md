@@ -29,7 +29,7 @@ Página web responsiva com as cifras e letras de todas as 12 faixas do álbum **
 | **09** | **Beijo na Boca** | **Tom: G** *(Sol Maior)* | 108 | [PDF](BEIJO%20NA%20BOCA%20-%20CIFRA.pdf) |
 | **10** | **Estou Aqui** | **Tom: A** *(Lá Maior)* | 72 | [PDF](ESTOU%20AQUI%20-%20CIFRA.pdf) |
 | **11** | **Para Dançar com Deus** | **Tom: Am** *(Lá Menor)* | 100 | [PDF](PARA%20DANCAR%20COM%20DEUS%20-%20CIFRA.pdf) |
-| **12** | **Tudo Passa, Amor** | **Tom: Am** *(Lá Menor)* | 85 | [PDF](TUDO%20PASSA%20AMOR%20-%20CIFRA.pdf) |
+| **12** | **Feito Cheiro de Café** | **Tom: Am** *(Lá Menor)* | 85 | [PDF](FEITO%20CHEIRO%20DE%20CAFE%20-%20CIFRA.pdf) |
 
 - 📚 **[Baixar Álbum Completo em PDF (12 Páginas)](DIEGO%20FOX%20-%20MESMO%20TARDE%20-%20TODAS%20AS%20CIFRAS.pdf)**
 
