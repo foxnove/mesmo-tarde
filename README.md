@@ -20,14 +20,14 @@ Página web responsiva com as cifras e letras de todas as 13 faixas do álbum **
 |---|---|---|---|---|
 | **01** | **Do Azul** | **Tom: G** *(Sol Maior)* | 86 | [PDF](DO%20AZUL%20-%20CIFRA.pdf) |
 | **02** | **Tão Fácil Assim** | **Tom: Em** *(Mi Menor)* | 79 | [PDF](TAO%20FACIL%20ASSIM%20-%20CIFRA.pdf) |
-| **03** | **Um Lugar Só** | **Tom: D** *(Ré Maior)* | 130 | [PDF](UM%20LUGAR%20SO%20-%20CIFRA.pdf) |
-| **04** | **Mesmo Tarde** *(Melodia Para Você)* | **Tom: Dm** *(Ré Menor)* | 149 | [PDF](MESMO%20TARDE%20-%20CIFRA.pdf) |
-| **05** | **Entre** | **Tom: G** *(Sol Maior)* | 124 | [PDF](ENTRE%20-%20CIFRA.pdf) |
-| **06** | **Todo Domingo** | **Tom: B** *(Si Maior)* | 127 | [PDF](TODO%20DOMINGO%20-%20CIFRA.pdf) |
-| **07** | **Vamos** | **Tom: D** *(Ré Maior)* | 92 | [PDF](VAMOS%20-%20CIFRA.pdf) |
-| **08** | **Aí de Mim** | **Tom: D** *(Ré Maior)* | 108 | [PDF](AI%20DE%20MIM%20-%20CIFRA.pdf) |
+| **03** | **Aí de Mim** | **Tom: D** *(Ré Maior)* | 108 | [PDF](AI%20DE%20MIM%20-%20CIFRA.pdf) |
+| **04** | **Um Lugar Só** | **Tom: D** *(Ré Maior)* | 130 | [PDF](UM%20LUGAR%20SO%20-%20CIFRA.pdf) |
+| **05** | **Estou Aqui** | **Tom: A** *(Lá Maior)* | 72 | [PDF](ESTOU%20AQUI%20-%20CIFRA.pdf) |
+| **06** | **Vamos** | **Tom: D** *(Ré Maior)* | 92 | [PDF](VAMOS%20-%20CIFRA.pdf) |
+| **07** | **Entre** | **Tom: G** *(Sol Maior)* | 124 | [PDF](ENTRE%20-%20CIFRA.pdf) |
+| **08** | **Mesmo Tarde** *(Melodia Para Você)* | **Tom: Dm** *(Ré Menor)* | 149 | [PDF](MESMO%20TARDE%20-%20CIFRA.pdf) |
 | **09** | **Beijo na Boca** | **Tom: G** *(Sol Maior)* | 108 | [PDF](BEIJO%20NA%20BOCA%20-%20CIFRA.pdf) |
-| **10** | **Estou Aqui** | **Tom: A** *(Lá Maior)* | 72 | [PDF](ESTOU%20AQUI%20-%20CIFRA.pdf) |
+| **10** | **Todo Domingo** | **Tom: B** *(Si Maior)* | 127 | [PDF](TODO%20DOMINGO%20-%20CIFRA.pdf) |
 | **11** | **Para Dançar com Deus** | **Tom: Am** *(Lá Menor)* | 100 | [PDF](PARA%20DANCAR%20COM%20DEUS%20-%20CIFRA.pdf) |
 | **12** | **Feito Cheiro de Café** | **Tom: Am** *(Lá Menor)* | 85 | [PDF](FEITO%20CHEIRO%20DE%20CAFE%20-%20CIFRA.pdf) |
 | **13** | **Sweet Mystery** | **Tom: C** *(Dó Maior)* | 98 | [PDF](SWEET%20MYSTERY%20-%20CIFRA.pdf) |

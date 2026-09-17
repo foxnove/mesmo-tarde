@@ -182,9 +182,113 @@ body {
     color: #94a3b8;
 }
 
+
+/* Screen Audio Player Bar */
+.screen-player-bar {
+    max-width: 190mm;
+    margin: 14px auto 16px auto;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 12px;
+    padding: 10px 16px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    border: 1.5px solid #334155;
+    font-family: 'Montserrat', sans-serif;
+    color: #ffffff;
+}
+
+.player-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.player-cover {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border: 1.5px solid #ea580c;
+    flex-shrink: 0;
+}
+
+.player-info {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.player-song-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: -0.2px;
+}
+
+.player-artist-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #ea580c;
+    letter-spacing: 0.3px;
+}
+
+.player-audio {
+    height: 36px;
+    border-radius: 20px;
+    outline: none;
+    accent-color: #ea580c;
+    flex: 2;
+    min-width: 220px;
+}
+
+.player-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    background: #1e293b;
+    border: 1px solid #475569;
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.player-back-btn:hover {
+    background: #ea580c;
+    border-color: #ea580c;
+    color: #ffffff;
+}
+
+@media print {
+    .screen-player-bar {
+        display: none !important;
+    }
+}
 </style>
 </head>
 <body>
+
+<div class="screen-player-bar">
+    <div class="player-wrapper">
+        <img src="CAPA FINAL.png" alt="Capa Mesmo Tarde" class="player-cover">
+        <div class="player-info">
+            <div class="player-song-title">11. Para Dançar com Deus</div>
+            <div class="player-artist-name">Diego Fox • Álbum: Mesmo Tarde</div>
+        </div>
+        <audio controls class="player-audio" src="mp3/11 Para Dançar com Deus.mp3" preload="metadata">
+            Seu navegador não suporta áudio.
+        </audio>
+        <a href="index.html" class="player-back-btn" title="Voltar para a lista completa">🏠 Todas as Cifras</a>
+    </div>
+</div>
+
 <div class="page-container">
     <div class="cifra-header">
         <div class="header-left">
