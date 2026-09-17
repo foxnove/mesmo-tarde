@@ -1,7 +1,7 @@
 # Diego Fox — Mesmo Tarde 🎵
 ### Caderno Oficial de Cifras e Letras (Estilo Cifra Club)
 
-Página web responsiva com as cifras e letras de todas as 12 faixas do álbum **Mesmo Tarde** do artista **Diego Fox**.
+Página web responsiva com as cifras e letras de todas as 13 faixas do álbum **Mesmo Tarde** do artista **Diego Fox**.
 
 ---
 
@@ -30,8 +30,9 @@ Página web responsiva com as cifras e letras de todas as 12 faixas do álbum **
 | **10** | **Estou Aqui** | **Tom: A** *(Lá Maior)* | 72 | [PDF](ESTOU%20AQUI%20-%20CIFRA.pdf) |
 | **11** | **Para Dançar com Deus** | **Tom: Am** *(Lá Menor)* | 100 | [PDF](PARA%20DANCAR%20COM%20DEUS%20-%20CIFRA.pdf) |
 | **12** | **Feito Cheiro de Café** | **Tom: Am** *(Lá Menor)* | 85 | [PDF](FEITO%20CHEIRO%20DE%20CAFE%20-%20CIFRA.pdf) |
+| **13** | **Sweet Mystery** | **Tom: C** *(Dó Maior)* | 98 | [PDF](SWEET%20MYSTERY%20-%20CIFRA.pdf) |
 
-- 📚 **[Baixar Álbum Completo em PDF (12 Páginas)](DIEGO%20FOX%20-%20MESMO%20TARDE%20-%20TODAS%20AS%20CIFRAS.pdf)**
+- 📚 **[Baixar Álbum Completo em PDF (13 Páginas)](DIEGO%20FOX%20-%20MESMO%20TARDE%20-%20TODAS%20AS%20CIFRAS.pdf)**
 
 ---
 
