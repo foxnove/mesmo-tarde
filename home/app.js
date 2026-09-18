@@ -165,6 +165,8 @@ function renderTracks() {
       const link = document.createElement('a');
       link.className = 'track-cifra';
       link.href = `../${encodeURIComponent(track.lyrics)}`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
       link.setAttribute('aria-label', `Ver cifra de ${track.title}`);
       link.title = `Cifra de ${track.title}`;
       link.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>';
