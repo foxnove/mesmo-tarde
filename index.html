@@ -761,7 +761,7 @@ body {
 <!-- Navbar -->
 <header class="navbar">
     <div class="brand-wrapper">
-        <span class="logo-badge">CIFRA CLUB</span>
+        <span class="logo-badge">CIFRA FOX</span>
         <div class="brand-info">
             <h1>Diego Fox — Mesmo Tarde</h1>
             <p>Caderno Oficial de Cifras</p>
@@ -875,7 +875,7 @@ body {
 <div class="autoscroll-bar">
     <button class="autoscroll-btn" id="btnAutoScroll" onclick="toggleAutoScroll()" title="Iniciar Rolagem Automática">▶</button>
     <span id="scrollStatus">Auto-Rolagem</span>
-    <button class="speed-btn" onclick="changeScrollSpeed()">1x</button>
+    <button class="speed-btn" onclick="changeScrollSpeed(this)">1x</button>
 </div>
 
 <script>
@@ -884,7 +884,8 @@ let currentSongIndex = 0;
 let currentTranspose = 0;
 let currentFontSize = 13;
 let isScrolling = false;
-let scrollInterval = null;
+let scrollAnimationFrame = null;
+let lastScrollTimestamp = null;
 let scrollSpeed = 1; // 1, 2, 3
 
 const chromaticScaleSharp = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -1031,28 +1032,53 @@ function toggleAutoScroll() {
 
 function startScrolling() {
     stopScrolling();
-    const intervalTime = 40 / scrollSpeed;
-    scrollInterval = setInterval(() => {
-        window.scrollBy({ top: 1, left: 0, behavior: 'smooth' });
-        // Check if reached bottom
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
-            toggleAutoScroll();
+
+    const scroller = document.scrollingElement || document.documentElement;
+    const pixelsPerSecond = 25 * scrollSpeed;
+
+    const tick = (timestamp) => {
+        if (!isScrolling) return;
+
+        if (lastScrollTimestamp === null) {
+            lastScrollTimestamp = timestamp;
         }
-    }, intervalTime);
+
+        const elapsed = timestamp - lastScrollTimestamp;
+        lastScrollTimestamp = timestamp;
+
+        const maxScroll = Math.max(0, scroller.scrollHeight - window.innerHeight);
+        const nextScrollTop = Math.min(
+            scroller.scrollTop + (pixelsPerSecond * elapsed / 1000),
+            maxScroll
+        );
+
+        scroller.scrollTop = nextScrollTop;
+
+        if (scroller.scrollTop >= maxScroll - 1) {
+            toggleAutoScroll();
+            return;
+        }
+
+        scrollAnimationFrame = requestAnimationFrame(tick);
+    };
+
+    scrollAnimationFrame = requestAnimationFrame(tick);
 }
 
 function stopScrolling() {
-    if (scrollInterval) {
-        clearInterval(scrollInterval);
-        scrollInterval = null;
+    if (scrollAnimationFrame !== null) {
+        cancelAnimationFrame(scrollAnimationFrame);
+        scrollAnimationFrame = null;
     }
+    lastScrollTimestamp = null;
 }
 
-function changeScrollSpeed() {
+function changeScrollSpeed(button) {
     const speeds = [1, 2, 3];
     let nextIdx = (speeds.indexOf(scrollSpeed) + 1) % speeds.length;
     scrollSpeed = speeds[nextIdx];
-    event.target.innerText = scrollSpeed + 'x';
+    button.innerText = scrollSpeed + 'x';
+
     if (isScrolling) {
         startScrolling();
     }
