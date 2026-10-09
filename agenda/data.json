@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-09T20:40:39.849Z",
+  "generatedAt": "2026-10-09T20:53:20.164Z",
   "expectedMembers": 5,
   "members": [
     {
@@ -8,6 +8,13 @@
       "instrument": "Voz / Violão",
       "active": true,
       "admin": true
+    },
+    {
+      "github": "danrdfig-tech",
+      "name": "Danilo",
+      "instrument": "",
+      "active": true,
+      "admin": false
     }
   ],
   "availability": [
@@ -48,6 +55,30 @@
       "issueNumber": 4,
       "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/4",
       "updatedAt": "2026-10-09T19:58:31Z"
+    },
+    {
+      "github": "danrdfig-tech",
+      "name": "Danilo",
+      "instrument": "",
+      "slots": [
+        {
+          "date": "2026-10-26",
+          "startTime": "19:00",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        },
+        {
+          "date": "2026-10-30",
+          "startTime": "19:00",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        }
+      ],
+      "issueNumber": 8,
+      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/8",
+      "updatedAt": "2026-10-09T20:40:24Z"
     }
   ],
   "confirmedRehearsals": []
