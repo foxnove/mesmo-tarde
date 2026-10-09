@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-09T19:54:38.849Z",
+  "generatedAt": "2026-10-09T19:58:51.477Z",
   "expectedMembers": 5,
   "members": [
     {
@@ -16,6 +16,13 @@
       "name": "Diego Fox",
       "instrument": "Voz / Violão",
       "slots": [
+        {
+          "date": "2026-10-14",
+          "startTime": "20:00",
+          "endTime": "23:00",
+          "status": "available",
+          "note": ""
+        },
         {
           "date": "2026-10-16",
           "startTime": "19:00",
@@ -38,9 +45,9 @@
           "note": ""
         }
       ],
-      "issueNumber": 3,
-      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/3",
-      "updatedAt": "2026-10-09T19:54:20Z"
+      "issueNumber": 4,
+      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/4",
+      "updatedAt": "2026-10-09T19:58:31Z"
     }
   ],
   "confirmedRehearsals": []
