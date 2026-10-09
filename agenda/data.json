@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-09T20:57:52.518Z",
+  "generatedAt": "2026-10-09T21:56:33.218Z",
   "expectedMembers": 5,
   "members": [
     {
@@ -81,11 +81,18 @@
           "endTime": "22:00",
           "status": "available",
           "note": ""
+        },
+        {
+          "date": "2026-11-04",
+          "startTime": "19:00",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
         }
       ],
-      "issueNumber": 8,
-      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/8",
-      "updatedAt": "2026-10-09T20:40:24Z"
+      "issueNumber": 10,
+      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/10",
+      "updatedAt": "2026-10-09T21:56:18Z"
     }
   ],
   "confirmedRehearsals": []
