@@ -34,6 +34,8 @@ jobs:
           node --test test/chords.test.mjs
           node --test test/agenda.test.mjs
           node --test test/github-access.test.mjs
+          node --test test/autoscroll.test.mjs
+          node --test test/autoscroll-page.test.mjs
           node --test home/links.test.mjs
 
       - name: Configurar GitHub Pages

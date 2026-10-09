@@ -822,7 +822,7 @@ input:checked + .slider:before { transform: translateX(14px); }
 /* Floating Auto-Scroll Controls */
 .autoscroll-bar {
     position: fixed;
-    bottom: 20px;
+    bottom: max(20px, calc(env(safe-area-inset-bottom, 0px) + 12px));
     right: 20px;
     background: var(--bg-nav);
     color: #fff;
@@ -842,8 +842,8 @@ input:checked + .slider:before { transform: translateX(14px); }
     background: var(--primary);
     color: #fff;
     border: none;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -853,6 +853,9 @@ input:checked + .slider:before { transform: translateX(14px); }
 }
 
 .speed-btn {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
     background: #1e293b;
     border: 1px solid #334155;
     color: #fff;
@@ -861,6 +864,9 @@ input:checked + .slider:before { transform: translateX(14px); }
     font-size: 11px;
     cursor: pointer;
 }
+
+.autoscroll-btn { touch-action: manipulation; }
+.autoscroll-bar button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
 /* Modal Dialogs */
 dialog {

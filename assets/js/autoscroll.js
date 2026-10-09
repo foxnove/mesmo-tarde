@@ -6,32 +6,31 @@
   let scrollSpeed = 1;
   let scrollAnimationFrame = null;
   let lastScrollTimestamp = null;
+  let pendingPixels = 0;
+
+  function updateControls() {
+    const btn = document.getElementById('btnAutoScroll');
+    const status = document.getElementById('scrollStatus');
+    if (btn) {
+      btn.innerText = isScrolling ? '⏸' : '▶';
+      btn.style.background = isScrolling ? '#22c55e' : 'var(--primary)';
+      btn.title = isScrolling ? 'Pausar Auto-Rolagem' : 'Iniciar Auto-Rolagem';
+      btn.setAttribute('aria-pressed', String(isScrolling));
+      btn.setAttribute('aria-label', btn.title);
+    }
+    if (status) status.innerText = isScrolling ? 'Rolando...' : 'Auto-Rolagem';
+  }
 
   function toggleAutoScroll() {
     isScrolling = !isScrolling;
-    const btn = document.getElementById('btnAutoScroll');
-    const status = document.getElementById('scrollStatus');
-
-    if (isScrolling) {
-      if (btn) {
-        btn.innerText = '⏸';
-        btn.style.background = '#22c55e';
-      }
-      if (status) status.innerText = 'Rolando...';
-      startScrolling();
-    } else {
-      if (btn) {
-        btn.innerText = '▶';
-        btn.style.background = 'var(--primary)';
-      }
-      if (status) status.innerText = 'Auto-Rolagem';
-      stopScrolling();
-    }
+    updateControls();
+    if (isScrolling) startScrolling();
+    else stopScrolling();
   }
 
   function startScrolling() {
     stopScrolling();
-    const basePixelsPerSecond = 26; // 1x = 26px/s, 2x = 52px/s, 3x = 78px/s
+    const basePixelsPerSecond = 18;
     lastScrollTimestamp = null;
 
     const tick = (timestamp) => {
@@ -43,7 +42,8 @@
         return;
       }
 
-      const elapsed = timestamp - lastScrollTimestamp;
+      // Never catch up a long suspended frame by jumping through the song.
+      const elapsed = Math.max(0, Math.min(100, timestamp - lastScrollTimestamp));
       lastScrollTimestamp = timestamp;
 
       // Cross-platform scroll metrics (Desktop, Android, Safari/iOS)
@@ -56,24 +56,22 @@
       const maxScroll = Math.max(0, scrollHeight - clientHeight);
 
       // Reached bottom
-      if (currentScrollTop >= maxScroll - 2) {
+      if (currentScrollTop >= maxScroll - 0.5) {
         isScrolling = false;
         stopScrolling();
-        const btn = document.getElementById('btnAutoScroll');
-        const status = document.getElementById('scrollStatus');
-        if (btn) {
-          btn.innerText = '▶';
-          btn.style.background = 'var(--primary)';
-        }
-        if (status) status.innerText = 'Auto-Rolagem';
+        updateControls();
         return;
       }
 
       // Delta calculation based on elapsed time for high-refresh-rate display smoothness
-      const delta = (basePixelsPerSecond * scrollSpeed * elapsed) / 1000;
-      const nextScrollTop = Math.min(currentScrollTop + delta, maxScroll);
-
-      window.scrollTo(0, nextScrollTop);
+      // Browsers may quantize scroll offsets to whole pixels. Preserve the
+      // fractional remainder instead of losing it on every animation frame.
+      pendingPixels += (basePixelsPerSecond * scrollSpeed * elapsed) / 1000;
+      const step = Math.floor(pendingPixels);
+      if (step > 0) {
+        pendingPixels -= step;
+        window.scrollTo({ left: window.scrollX || 0, top: Math.min(currentScrollTop + step, maxScroll), behavior: 'instant' });
+      }
       scrollAnimationFrame = requestAnimationFrame(tick);
     };
 
@@ -86,13 +84,17 @@
       scrollAnimationFrame = null;
     }
     lastScrollTimestamp = null;
+    pendingPixels = 0;
   }
 
   function changeScrollSpeed(button) {
-    const speeds = [1, 2, 3];
+    const speeds = [0.5, 1, 1.5, 2, 3];
     let nextIdx = (speeds.indexOf(scrollSpeed) + 1) % speeds.length;
     scrollSpeed = speeds[nextIdx];
-    if (button) button.innerText = scrollSpeed + 'x';
+    if (button) {
+      button.innerText = scrollSpeed + 'x';
+      button.setAttribute?.('aria-label', `Velocidade ${scrollSpeed}x. Toque para mudar.`);
+    }
     // If running, it continues seamlessly at the new speed on next frame
   }
 
@@ -102,6 +104,16 @@
     }
     stopScrolling();
   }
+
+  function pauseForInteraction(event) {
+    if (isScrolling && !event.target?.closest?.('.autoscroll-bar')) resetAutoScroll();
+  }
+  document.addEventListener('touchstart', pauseForInteraction, { passive: true });
+  document.addEventListener('pointerdown', pauseForInteraction, { passive: true });
+  document.addEventListener('wheel', pauseForInteraction, { passive: true });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) resetAutoScroll();
+  });
 
   // Global exposure
   global.toggleAutoScroll = toggleAutoScroll;
