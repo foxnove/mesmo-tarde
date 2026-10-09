@@ -1,0 +1,23 @@
+[
+  {
+    "github": "foxnove",
+    "name": "Diego Fox",
+    "instrument": "Voz / Violão",
+    "active": true,
+    "admin": true
+  },
+  {
+    "github": "baixo-fox",
+    "name": "Baixo",
+    "instrument": "Baixo",
+    "active": true,
+    "admin": false
+  },
+  {
+    "github": "batera-fox",
+    "name": "Bateria",
+    "instrument": "Bateria",
+    "active": true,
+    "admin": false
+  }
+]

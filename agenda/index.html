@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#0b0f19">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https://*.githubusercontent.com; connect-src 'self';">
+  <title>Agenda de Ensaios — Mesmo Tarde | Diego Fox</title>
+  <link rel="icon" type="image/png" href="../CAPA FINAL.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="agenda-header">
+    <div class="brand-wrapper">
+      <span class="brand-logo">AGENDA FOX</span>
+      <div class="brand-title">
+        <h1>Ensaios • Mesmo Tarde</h1>
+        <p>Disponibilidade Compartilhada da Banda</p>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="../" class="nav-btn" title="Caderno de Cifras">🎸 Cifras</a>
+      <a href="../home/" class="nav-btn" title="Player do Álbum">🎵 Player</a>
+      <button class="nav-btn primary" onclick="openRecordModal()" title="Adicionar meus horários livres">
+        ➕ Disponibilidade
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="agenda-container">
+
+    <!-- Confirmed Rehearsals (Only created by foxnove) -->
+    <section id="confirmedContainer" class="confirmed-section" style="display: none;"></section>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="windows" onclick="switchTab('windows')">
+        ⭐ Melhores Horários
+      </button>
+      <button class="tab-btn" data-tab="day" onclick="switchTab('day')">
+        📆 Por Dia
+      </button>
+      <button class="tab-btn" data-tab="week" onclick="switchTab('week')">
+        📅 Semana Geral
+      </button>
+    </div>
+
+    <!-- Actions and Headline -->
+    <div class="actions-row">
+      <div class="section-headline">
+        <h2>Horários em Comum</h2>
+        <p>Calculado automaticamente por interseção de disponibilidade entre todos os integrantes ativos.</p>
+      </div>
+      <button class="btn-record" onclick="openRecordModal()">
+        📅 Registrar Minha Disponibilidade
+      </button>
+    </div>
+
+    <!-- Active Tab Container (Windows, Day, Week) -->
+    <section id="tabContentContainer"></section>
+
+    <!-- Info Card: How GitHub Availability Works -->
+    <section style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-top: 40px; font-size: 12.5px; color: var(--text-muted); line-height: 1.6;">
+      <h4 style="color: var(--text-main); font-size: 14px; font-weight: 800; margin-bottom: 6px;">🛡️ Como funciona o registro de horários?</h4>
+      <p>
+        Para garantir <strong>100% de gratuidade e privacidade</strong> sem nenhum serviço de login externo ou banco de dados pago, os integrantes registram seus horários através de <strong>GitHub Issues</strong>.
+      </p>
+      <p style="margin-top: 6px;">
+        1. Você escolhe as datas e horários na página e clica em <strong>"Registrar Disponibilidade"</strong>.<br>
+        2. Uma Issue pré-formatada será aberta no GitHub oficial do projeto.<br>
+        3. Você confirma logado com seu usuário do GitHub.<br>
+        4. O <strong>GitHub Actions</strong> valida seu login na lista de membros oficiais (<code>agenda/members.json</code>) e atualiza esta página automaticamente!
+      </p>
+      <div style="margin-top: 10px;">
+        <a href="https://github.com/foxnove/mesmo-tarde/issues?q=is%3Aissue+label%3Adisponibilidade" target="_blank" rel="noopener noreferrer" style="color: var(--border-highlight); font-weight: 700; text-decoration: none;">
+          ✏️ Ver ou editar minhas disponibilidades existentes no GitHub →
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal: Registrar Disponibilidade -->
+  <dialog id="recordModal">
+    <div class="modal-header">
+      <h3>📅 Registrar Disponibilidade</h3>
+      <button type="button" class="btn-close" onclick="document.getElementById('recordModal').close()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size: 12px; color: var(--text-muted);">
+        Adicione os dias e horários em que você tem disponibilidade para ensaio. Você pode incluir múltiplos horários antes de enviar!
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="form-group" style="grid-column: span 2;">
+          <label for="slotDateInput">Data do Ensaio</label>
+          <input type="date" id="slotDateInput" class="form-input">
+        </div>
+        <div class="form-group">
+          <label for="slotStartInput">Hora Inicial</label>
+          <input type="time" id="slotStartInput" class="form-input" value="19:00">
+        </div>
+        <div class="form-group">
+          <label for="slotEndInput">Hora Final</label>
+          <input type="time" id="slotEndInput" class="form-input" value="22:00">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="slotStatusInput">Seu Status</label>
+        <select id="slotStatusInput" class="form-select">
+          <option value="available" selected>🟢 DISPONÍVEL (Tenho certeza que posso)</option>
+          <option value="maybe">🟡 TALVEZ (Depende de confirmação)</option>
+          <option value="unavailable">🔴 INDISPONÍVEL (Não posso neste horário)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="slotNoteInput">Observação (Opcional)</label>
+        <input type="text" id="slotNoteInput" class="form-input" placeholder="Ex: Posso chegar um pouco antes se precisar">
+      </div>
+
+      <button type="button" class="btn-secondary" onclick="addDraftSlot()" style="width: 100%; padding: 10px; font-weight: 800;">
+        ➕ Adicionar este Horário à Lista
+      </button>
+
+      <div class="form-group" style="margin-top: 6px;">
+        <label>Horários Selecionados para Envio:</label>
+        <div id="draftSlotsList" class="slots-builder-list"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" onclick="document.getElementById('recordModal').close()">Cancelar</button>
+      <button type="button" class="btn-primary" onclick="submitAvailabilityToGithub()" style="background: #2563eb;">
+        🚀 Registrar no GitHub
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Core Scripts -->
+  <script src="agenda-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
