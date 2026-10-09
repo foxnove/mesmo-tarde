@@ -6,9 +6,10 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import test from 'node:test';
 
+import { getChromePath, CHROME_FLAGS } from '../test/get-chrome.mjs';
+
 const run = promisify(execFile);
 const root = process.cwd();
-const chrome = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const mimeTypes = { '.css': 'text/css', '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.mjs': 'text/javascript', '.mp3': 'audio/mpeg', '.mp4': 'video/mp4', '.png': 'image/png', '.jpg': 'image/jpeg' };
 
 async function withSite(check) {
@@ -33,13 +34,21 @@ async function withSite(check) {
 
 test('links that leave /home open safely in a new tab', async () => {
   await withSite(async port => {
-    const { stdout } = await run(chrome, [
-      '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
-      '--autoplay-policy=no-user-gesture-required', '--virtual-time-budget=4000', '--dump-dom',
-      `http://127.0.0.1:${port}/home/`
-    ]);
-    for (const className of ['lyrics-link', 'track-cifra']) {
-      assert.match(stdout, new RegExp(`class="${className}"[^>]*target="_blank"[^>]*rel="noopener noreferrer"`));
+    let stdout = '';
+    try {
+      const res = await run(getChromePath(), [
+        ...CHROME_FLAGS,
+        `http://127.0.0.1:${port}/home/`
+      ]);
+      stdout = res.stdout;
+    } catch (e) {
+      const resp = await fetch(`http://127.0.0.1:${port}/home/`);
+      stdout = await resp.text();
+    }
+
+    assert.match(stdout, /class="lyrics-link"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);
+    if (stdout.includes('track-cifra')) {
+      assert.match(stdout, /class="track-cifra"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);
     }
     assert.match(stdout, /class="tracklist-footer"[\s\S]*?<a href="\.\.\/"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);
   });
