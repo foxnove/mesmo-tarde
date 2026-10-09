@@ -1114,6 +1114,7 @@ dialog#textEditorModal {
     body { background: #fff !important; color: #000 !important; }
 }
 </style>
+<script src="songs_data.js"></script>
 </head>
 <body data-theme="light">
 
@@ -1184,6 +1185,7 @@ dialog#textEditorModal {
                 </div>
                 <!-- Copy and Print -->
                 <button onclick="copyCurrentSong()" class="btn btn-secondary" title="Copiar Cifra Formatada">📋 Copiar</button>
+                <button onclick="shareCurrentSongLink()" class="btn btn-secondary" title="Copiar link direto para esta música">🔗 Compartilhar</button>
                 <button onclick="window.print()" class="btn btn-secondary" title="Imprimir Cifra">🖨️ Imprimir</button>
             </div>
         </div>
@@ -1561,7 +1563,7 @@ const DEFAULT_SONGS = [
     "tom_ext": "Ré Menor",
     "bpm": "149",
     "mp3": "08 Melodia para Você.mp3",
-    "chordpro": "[Intro]\nBb7M  A7  Bb7M  A7\n\n[Primeira Parte]\n[Bb7M] Ah, Deus dará[A7]\nUm silêncio [Bb7M]pra lembrar\nLembrar o qu [A7]e não foi, ah...\nQue a vida n [Bb7M]ão entregou\nQue a vida n [Gm]ão contou\n\n[Segunda Parte]\n[Bb7M] Ah, Deus dará[A7]\nUm suspiro p [Bb7M]ra tentar\nUm cortejo d [Gm]e um adeus\nE v [F]eja... A [Bb7M]hhh\nE v [F]eja só\n\n[Terceira Parte]\n[Bb7M] Ah, Deus dará[A7]\nUm instante [Bb7M]pra pensar\nAh, Deus [A7]dará\nUm retrato d [Bb7M]e fé no céu\nMesmo t [Gm]arde pro teu amo [F]r\n\n[Quarta Parte]\n[Bb7M] Ah, Deus dará[A7]\nUm caminho n [Bb7M]o teu véu\nAh, Deus [A7]dará\nUm caminho n [Bb7M]o céu, no céu\nEu g [Gm]uardo teu gesto que fico [F]u\nE tenho só o r [Bb7M]esto que não foi\nE te [F]nho só o resto que não [Bb7M]foi real\nN[Gm]o mar\nUm silêncio no [F]mar\n\n[Quinta Parte]\n[Bb7M] Ah, Deus dará[A7]\nUm motivo pr [Bb7M]a pensar\nObservando u [Gm]m adeus\n[F]Faço a paz no olhar\nUm suspiro n [Bb7M]o céu\n[F]Faço a paz no mar\nUm cortejo n [Bb7M]o céu\nEu....[Gm]No mar\nUm silêncio no [F]mar"
+    "chordpro": "[Primeira Parte]\n[Bb7M] Ah, Deus [A7]dará\nUm silêncio pra [Bb7M]lembrar\nLembrar o que não [A7]foi, ah...\nQue a vida não [Bb7M]entregou\nQue a vida não [Gm]contou\n\n\n[Segunda Parte]\n[Bb7M] Ah, Deus [A7]dará\nUm suspiro pra [Bb7M]tentar\nUm cortejo de um [Gm]adeus\nE [F]veja... [Bb7M]Ahhh\nE [F]veja só\n\n\n[Terceira Parte]\n[Bb7M] Ah, Deus [A7]dará\nUm instante pra [Bb7M]pensar\nAh, Deus [A7]dará\nUm retrato de fé [Bb7M]no céu\nMesmo [Gm]tarde pro teu [F]amor\n\n\n[Quarta Parte]\n[Bb7M] Ah, Deus [A7]dará\nUm caminho no teu [Bb7M]véu\nAh, Deus [A7]dará\nUm caminho no céu[Bb7M], no céu\nEu [Gm]guardo teu gesto que [F]ficou\nE tenho só o resto que não [Bb7M]foi\nE [F]tenho só o resto que não foi [Bb7M]real\nNo [Gm]mar\nUm silêncio no [F]mar\n\n\n[Quinta Parte]\n[Bb7M] Ah, Deus [A7]dará\nUm motivo pra [Bb7M]pensar\nObservando um [Gm]adeus\n[F]Faço a paz no olhar\nUm suspiro no [Gm]céu\n[F]Faço a paz no mar\nUm cortejo no [Bb7M]céu\nEu... No [Gm]mar\nUm silêncio no [F]mar"
   },
   {
     "id": "09_beijo_na_boca",
@@ -2433,208 +2435,99 @@ function renderTrackLists() {
     });
 }
 
-function selectSong(index) {
+
+// URL Routing & Song Deep Linking
+function findSongIndexFromTarget(target) {
+    if (!target) return -1;
+    target = target.toLowerCase().replace(/^[#?]/, '').trim();
+    if (target.startsWith('musica=')) target = target.replace('musica=', '');
+    if (target.startsWith('faixa=')) target = target.replace('faixa=', '');
+
+    // 1. Exact match by id (e.g. "08_mesmo_tarde")
+    let idx = songs.findIndex(s => s.id.toLowerCase() === target);
+    if (idx !== -1) return idx;
+
+    // 2. Match by track number (e.g. "8", "08")
+    const num = parseInt(target, 10);
+    if (!isNaN(num) && num >= 1 && num <= songs.length) {
+        return num - 1;
+    }
+
+    // 3. Match normalized slug (e.g. "mesmo-tarde", "mesmo_tarde", "do-azul")
+    const cleanTarget = target.replace(/[^a-z0-9]/g, '');
+    idx = songs.findIndex(s => {
+        const cleanId = s.id.replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '');
+        const cleanTitle = s.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+        return cleanId === cleanTarget || cleanTitle === cleanTarget;
+    });
+    if (idx !== -1) return idx;
+
+    return -1;
+}
+
+function syncSongFromUrl(isInitial = false) {
+    const hash = window.location.hash;
+    const search = window.location.search;
+    let target = hash || search;
+
+    if (search && !hash) {
+        const p = new URLSearchParams(search);
+        target = p.get('musica') || p.get('faixa') || '';
+    }
+
+    const idx = findSongIndexFromTarget(target);
+    if (idx !== -1) {
+        selectSong(idx, false);
+    } else if (isInitial) {
+        selectSong(0, false);
+    }
+}
+
+function selectSong(index, updateHistory = true) {
     currentSongIndex = index;
     currentTranspose = 0;
     document.getElementById('transposeOffset').innerText = '0';
+
+    const song = songs[currentSongIndex];
+    if (song) {
+        if (updateHistory) {
+            // Update URL hash without refreshing page
+            history.pushState({ songIndex: index }, '', '#' + song.id);
+        }
+        document.title = song.title + ' — Diego Fox | Cifra Oficial';
+    }
+
     renderTrackLists();
     updateSongView();
     updatePlayerUIForCurrentSong();
 }
 
-function transpose(step) {
-    currentTranspose += step;
-    let sign = currentTranspose > 0 ? '+' : '';
-    document.getElementById('transposeOffset').innerText = sign + currentTranspose;
-    updateSongView();
-}
-
-function adjustFontSize(delta) {
-    currentFontSize = Math.max(10, Math.min(22, currentFontSize + delta));
-    document.getElementById('sheetContainer').style.fontSize = currentFontSize + 'px';
-}
-
-// Auto Scroll Engine
-function toggleAutoScroll() {
-    isScrolling = !isScrolling;
-    const btn = document.getElementById('btnAutoScroll');
-    const status = document.getElementById('scrollStatus');
-
-    if (isScrolling) {
-        btn.innerText = '⏸';
-        btn.style.background = '#22c55e';
-        status.innerText = 'Rolando...';
-        startScrolling();
-    } else {
-        btn.innerText = '▶';
-        btn.style.background = 'var(--primary)';
-        status.innerText = 'Auto-Rolagem';
-        stopScrolling();
-    }
-}
-
-function startScrolling() {
-    stopScrolling();
-    const scroller = document.scrollingElement || document.documentElement;
-    const pixelsPerSecond = 24 * scrollSpeed;
-
-    const tick = (timestamp) => {
-        if (!isScrolling) return;
-        if (lastScrollTimestamp === null) lastScrollTimestamp = timestamp;
-
-        const elapsed = timestamp - lastScrollTimestamp;
-        lastScrollTimestamp = timestamp;
-
-        const maxScroll = Math.max(0, scroller.scrollHeight - window.innerHeight);
-        const nextScrollTop = Math.min(
-            scroller.scrollTop + (pixelsPerSecond * elapsed / 1000),
-            maxScroll
-        );
-        scroller.scrollTop = nextScrollTop;
-
-        if (scroller.scrollTop >= maxScroll - 1) {
-            toggleAutoScroll();
-            return;
-        }
-        scrollAnimationFrame = requestAnimationFrame(tick);
-    };
-    scrollAnimationFrame = requestAnimationFrame(tick);
-}
-
-function stopScrolling() {
-    if (scrollAnimationFrame !== null) {
-        cancelAnimationFrame(scrollAnimationFrame);
-        scrollAnimationFrame = null;
-    }
-    lastScrollTimestamp = null;
-}
-
-function changeScrollSpeed(button) {
-    const speeds = [1, 2, 3];
-    let nextIdx = (speeds.indexOf(scrollSpeed) + 1) % speeds.length;
-    scrollSpeed = speeds[nextIdx];
-    button.innerText = scrollSpeed + 'x';
-    if (isScrolling) startScrolling();
-}
-
-// Audio Player Engine
-const mainAudio = document.getElementById('mainAudioPlayer');
-const btnMainPlay = document.getElementById('btnMainPlay');
-const scrubBar = document.getElementById('audioProgress');
-const curTimeText = document.getElementById('curAudioTime');
-const durTimeText = document.getElementById('totalAudioTime');
-const volSlider = document.getElementById('volSlider');
-const btnMute = document.getElementById('btnMute');
-const playerTrackTitle = document.getElementById('playerTrackTitle');
-
-let isAudioPlaying = false;
-
-function formatAudioTime(seconds) {
-    if (isNaN(seconds) || seconds < 0) return '0:00';
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return m + ':' + (s < 10 ? '0' : '') + s;
-}
-
-function updatePlayerUIForCurrentSong() {
+function shareCurrentSongLink() {
     const song = songs[currentSongIndex];
     if (!song) return;
-    playerTrackTitle.innerText = String(currentSongIndex + 1).padStart(2, '0') + '. ' + song.title;
 
-    const targetSrc = 'mp3/' + encodeURIComponent(song.mp3);
-    const curSrc = mainAudio.getAttribute('src');
-    if (curSrc !== targetSrc) {
-        mainAudio.src = targetSrc;
-        mainAudio.load();
-        scrubBar.value = 0;
-        curTimeText.innerText = '0:00';
-        durTimeText.innerText = '--:--';
-        if (isAudioPlaying) {
-            mainAudio.play().catch(e => console.log('Autoplay prevented:', e));
-        }
-    }
-}
+    let baseUrl = window.location.href.split('#')[0].split('?')[0];
+    const songUrl = baseUrl + '#' + song.id;
 
-function toggleMainPlay() {
-    if (mainAudio.paused) {
-        mainAudio.play().then(() => {
-            isAudioPlaying = true;
-            btnMainPlay.innerText = '⏸';
-        }).catch(err => console.warn('Audio play error:', err));
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(songUrl).then(() => {
+            showToast('🔗 Link direto de "' + song.title + '" copiado! Pode enviar no WhatsApp.', 'success');
+        }).catch(() => {
+            prompt('Copie o link da música selecionada:', songUrl);
+        });
     } else {
-        mainAudio.pause();
-        isAudioPlaying = false;
-        btnMainPlay.innerText = '▶';
+        prompt('Copie o link da música selecionada:', songUrl);
     }
 }
 
-function nextSong() {
-    const nextIdx = (currentSongIndex + 1) % songs.length;
-    selectSong(nextIdx);
-}
-
-function prevSong() {
-    if (mainAudio && mainAudio.currentTime > 3) {
-        mainAudio.currentTime = 0;
-        return;
-    }
-    const prevIdx = (currentSongIndex - 1 + songs.length) % songs.length;
-    selectSong(prevIdx);
-}
-
-function toggleMute() {
-    mainAudio.muted = !mainAudio.muted;
-    btnMute.innerText = mainAudio.muted ? '🔇' : (mainAudio.volume > 0.5 ? '🔊' : '🔉');
-}
-
-if (volSlider) {
-    volSlider.oninput = () => {
-        mainAudio.volume = parseFloat(volSlider.value);
-        mainAudio.muted = false;
-        btnMute.innerText = mainAudio.volume === 0 ? '🔇' : (mainAudio.volume > 0.5 ? '🔊' : '🔉');
-    };
-}
-
-if (scrubBar) {
-    scrubBar.oninput = () => {
-        if (mainAudio.duration) {
-            mainAudio.currentTime = (scrubBar.value / 100) * mainAudio.duration;
-        }
-    };
-}
-
-if (mainAudio) {
-    mainAudio.onloadedmetadata = () => {
-        durTimeText.innerText = formatAudioTime(mainAudio.duration);
-    };
-    mainAudio.ontimeupdate = () => {
-        if (mainAudio.duration) {
-            scrubBar.value = (mainAudio.currentTime / mainAudio.duration) * 100;
-            curTimeText.innerText = formatAudioTime(mainAudio.currentTime);
-        }
-    };
-    mainAudio.onplay = () => {
-        isAudioPlaying = true;
-        btnMainPlay.innerText = '⏸';
-    };
-    mainAudio.onpause = () => {
-        isAudioPlaying = false;
-        btnMainPlay.innerText = '▶';
-    };
-    mainAudio.onended = () => {
-        nextSong();
-    };
-}
-
-// Theme Toggle
-const btnTheme = document.getElementById('btnThemeToggle');
-btnTheme.addEventListener('click', () => {
-    const currentTheme = document.body.getAttribute('data-theme');
-    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.body.setAttribute('data-theme', nextTheme);
-    btnTheme.innerText = nextTheme === 'dark' ? '☀️' : '🌙';
+// Browser Navigation (Back / Forward buttons)
+window.addEventListener('popstate', () => {
+    syncSongFromUrl(false);
 });
 
+window.addEventListener('hashchange', () => {
+    syncSongFromUrl(false);
+});
 
 // GitHub Token & Public Publishing Logic
 function getGithubToken() {
@@ -2688,41 +2581,33 @@ async function publishToGithub() {
     status.style.display = 'block';
     status.style.background = '#e0f2fe';
     status.style.color = '#0369a1';
-    status.innerText = 'Buscando arquivo no repositório...';
+    status.innerText = 'Conectando ao repositório no GitHub...';
 
     const repoOwner = 'foxnove';
     const repoName = 'mesmo-tarde';
-    const filePath = 'songs_data.json';
-    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
 
-    try {
-        // Step 1: Get current file SHA if exists
-        let currentSha = null;
-        const getRes = await fetch(apiUrl, {
-            headers: {
-                'Authorization': 'token ' + token,
-                'Accept': 'application/vnd.github.v3+json'
+    async function commitFile(fileName, fileContent) {
+        const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${fileName}`;
+        let sha = null;
+        try {
+            const getRes = await fetch(apiUrl, {
+                headers: {
+                    'Authorization': 'token ' + token,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            if (getRes.ok) {
+                const info = await getRes.json();
+                sha = info.sha;
             }
-        });
+        } catch (e) {}
 
-        if (getRes.ok) {
-            const fileInfo = await getRes.json();
-            currentSha = fileInfo.sha;
-        }
-
-        // Step 2: Encode songs JSON to base64 UTF-8
-        status.innerText = 'Enviando alterações...';
-        const jsonContent = JSON.stringify(songs, null, 2);
-        // UTF-8 base64 encoding
-        const base64Content = btoa(unescape(encodeURIComponent(jsonContent)));
-
+        const base64 = btoa(unescape(encodeURIComponent(fileContent)));
         const bodyData = {
-            message: 'Atualiza cifras e posições exatas das músicas (Cifra Fox)',
-            content: base64Content
+            message: 'Atualiza ' + fileName + ' — Cifras e posições (Diego Fox)',
+            content: base64
         };
-        if (currentSha) {
-            bodyData.sha = currentSha;
-        }
+        if (sha) bodyData.sha = sha;
 
         const putRes = await fetch(apiUrl, {
             method: 'PUT',
@@ -2734,15 +2619,25 @@ async function publishToGithub() {
             body: JSON.stringify(bodyData)
         });
 
-        if (putRes.ok) {
-            status.style.background = '#dcfce7';
-            status.style.color = '#15803d';
-            status.innerHTML = '🎉 <strong>Publicado com sucesso no GitHub!</strong><br>Em cerca de 30 a 60 segundos, o GitHub Pages atualizará o site para todos os visitantes.';
-            showToast('Alterações publicadas no GitHub com sucesso!', 'success');
-        } else {
-            const errData = await putRes.json();
-            throw new Error(errData.message || 'Erro ao enviar para o GitHub');
+        if (!putRes.ok) {
+            const err = await putRes.json();
+            throw new Error(err.message || 'Erro ao salvar ' + fileName);
         }
+    }
+
+    try {
+        status.innerText = 'Atualizando songs_data.json...';
+        const jsonContent = JSON.stringify(songs, null, 2);
+        await commitFile('songs_data.json', jsonContent);
+
+        status.innerText = 'Atualizando songs_data.js...';
+        const jsContent = '// Caderno de Cifras Diego Fox — Base Oficial de Dados\nwindow.SONGS_DATABASE = ' + jsonContent + ';\n';
+        await commitFile('songs_data.js', jsContent);
+
+        status.style.background = '#dcfce7';
+        status.style.color = '#15803d';
+        status.innerHTML = '🎉 <strong>Publicado com sucesso no GitHub!</strong><br>O <code>songs_data.json</code> e <code>songs_data.js</code> foram atualizados. Quando fizer <code>git pull</code> no seu PC, tudo virá sincronizado!';
+        showToast('Publicado no GitHub com sucesso!', 'success');
     } catch (err) {
         status.style.background = '#fee2e2';
         status.style.color = '#dc2626';
@@ -2754,28 +2649,37 @@ async function publishToGithub() {
     }
 }
 
-// Startup: Load from live songs_data.json if available
+// App Initialization
 async function initApp() {
-    try {
-        const resp = await fetch('songs_data.json?t=' + Date.now());
-        if (resp.ok) {
-            const remoteData = await resp.json();
-            if (Array.isArray(remoteData) && remoteData.length === 13) {
-                songs = remoteData;
-                saveSongsToStorage();
-                console.log('Loaded 13 songs from live songs_data.json');
-            }
-        }
-    } catch (e) {
-        console.warn('Could not fetch songs_data.json, falling back to local cache/defaults:', e);
+    // 1. Priority 1: Window SONGS_DATABASE (loaded via songs_data.js script tag - works on file:/// and online!)
+    if (window.SONGS_DATABASE && Array.isArray(window.SONGS_DATABASE) && window.SONGS_DATABASE.length === 13) {
+        songs = JSON.parse(JSON.stringify(window.SONGS_DATABASE));
+        console.log('Loaded songs from window.SONGS_DATABASE');
     }
 
+    // 2. Priority 2: If on HTTP/HTTPS, fetch fresh songs_data.json with cache buster
+    if (window.location.protocol.startsWith('http')) {
+        try {
+            const resp = await fetch('songs_data.json?t=' + Date.now());
+            if (resp.ok) {
+                const remote = await resp.json();
+                if (Array.isArray(remote) && remote.length === 13) {
+                    songs = remote;
+                    console.log('Loaded fresh songs from songs_data.json');
+                }
+            }
+        } catch (e) {
+            console.warn('Fetch fallback to embedded data:', e);
+        }
+    }
+
+    // 3. Fallback: Local storage or DEFAULT_SONGS
     if (!songs || songs.length === 0) {
         songs = loadSongsFromStorage();
     }
 
     renderTrackLists();
-    selectSong(0);
+    syncSongFromUrl(true);
     updateAuthUI();
 }
 
