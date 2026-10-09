@@ -63,13 +63,15 @@ O Fine-grained Personal Access Token (PAT) do administrador:
 ## 🚀 Como Publicar Alterações para Todos os Visitantes
 
 1. No Cifra Fox, clique em **"🔑 Entrar no Modo Artista"**.
-2. Cole o seu Fine-grained PAT. O sistema valida se o usuário autenticado é `foxnove` e se possui permissão de escrita no repositório.
+2. Cole o seu Fine-grained PAT. O sistema valida o usuário `foxnove` e testa a permissão **Contents: Read and write** reenviando os bytes de um blob que já existe no repositório. A SHA deve permanecer idêntica; nenhum arquivo, commit ou branch é alterado nessa verificação.
 3. Edite as cifras, posições e seções (arraste cifras, clique nas palavras ou edite blocos ChordPro).
 4. Clique em **"💾 Salvar Local"** (para salvar rascunho no navegador) e, quando estiver pronto, clique em **"🚀 Publicar para Todos"**.
 5. O sistema executa um **commit atômico** via **Git Data API** atualizando simultaneamente:
    - `songs_data.json`
    - `songs_data.js`
-6. Em cerca de 30 a 60 segundos, o GitHub Pages atualiza o site para todo o público com as novas cifras!
+6. O GitHub Pages atualiza o site para todo o público quando o workflow de publicação concluir. Salvar o commit e concluir o deploy são etapas distintas.
+
+Se aparecer **Resource not accessible by personal access token**, confira em GitHub **Settings → Developer settings → Personal access tokens → Fine-grained tokens**: proprietário `foxnove`, repositório `mesmo-tarde` e **Contents: Read and write**. Salve a configuração e use **Trocar token sem perder as edições** no site. O token da sessão fica somente na memória da aba; reutilizá-lo durante a publicação é esperado.
 
 ---
 
@@ -90,13 +92,18 @@ A agenda de ensaios permite que os músicos registrem seus dias e horários de d
    - O workflow `.github/workflows/agenda.yml` é disparado automaticamente.
    - O Action verifica se o autor da Issue (`issue.user.login`) está cadastrado em `agenda/members.json`.
    - Issues de usuários não cadastrados são ignoradas.
-   - Os dados são consolidados e salvos em `agenda/data.json`, atualizando o GitHub Pages imediatamente.
+   - Todos os registros abertos válidos de cada integrante são consolidados em `agenda/data.json`; um novo dia não apaga os anteriores.
+   - Os registros antigos sem etiquetas também são reconhecidos pelo título de disponibilidade.
+   - Ao abrir a página ou clicar em **Atualizar respostas**, a agenda consulta o GitHub diretamente. Se a consulta falhar, mostra a última atualização publicada com um aviso.
 5. **Algoritmo de Interseção de Horários:**
    - A página calcula os períodos comuns de sobreposição entre os músicos.
-   - Destaca o **"⭐ Melhor Horário"** e **"✅ HORÁRIO IDEAL PARA ENSAIO"** quando todos os membros ativos estiverem disponíveis.
+   - Destaca **"✅ HORÁRIO IDEAL"** somente quando os cinco integrantes estiverem disponíveis no mesmo intervalo. O total esperado está em `agenda/config.json`.
+   - Integrantes e datas aparecem somente quando existem respostas reais; ausência de resposta significa **aguardando**, não indisponível.
 6. **Ensaios Confirmados:**
    - Apenas o administrador `foxnove` pode registrar ensaios confirmados (via Issue com template `ensaio_confirmado.yml`).
    - Ensaios oficiais aparecem destacados no topo da agenda com data, horário e local.
+
+**Limitação atual:** o cadastro ainda exige confirmação no GitHub e autorização em `members.json`. Login simples, autocadastro de nome/instrumento e edição/salvamento pela própria agenda não foram implementados. GitHub Pages hospeda arquivos estáticos e não oferece o serviço necessário para esse fluxo OAuth sem tokens manuais. Todos os horários enviados para este repositório público podem ser vistos publicamente.
 
 ---
 

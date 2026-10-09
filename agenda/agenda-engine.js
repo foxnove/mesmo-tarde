@@ -33,7 +33,7 @@
   }
 
   // Real Interval Intersection Algorithm
-  function calculateIntersectionsForDate(dateStr, members = [], availabilityList = []) {
+  function calculateIntersectionsForDate(dateStr, members = [], availabilityList = [], expectedMembers = members.filter(m => m.active !== false).length) {
     const activeMembers = members.filter(m => m.active !== false);
     if (activeMembers.length === 0) return [];
 
@@ -85,11 +85,14 @@
       const availableMembers = [];
       const maybeMembers = [];
       const unavailableMembers = [];
+      const missingMembers = [];
 
       activeMembers.forEach(member => {
         const user = member.github.toLowerCase();
         const slots = memberSlotsMap.get(user) || [];
-        const matchingSlot = slots.find(s => s.start <= mid && s.end >= mid);
+        // Explicit absence wins over contradictory overlapping answers.
+        const matches = slots.filter(s => s.start <= mid && s.end >= mid);
+        const matchingSlot = matches.find(s => s.status === 'unavailable') || matches.find(s => s.status === 'maybe') || matches[0];
 
         if (matchingSlot) {
           if (matchingSlot.status === 'available') {
@@ -100,7 +103,7 @@
             unavailableMembers.push(member);
           }
         } else {
-          unavailableMembers.push(member);
+          missingMembers.push(member);
         }
       });
 
@@ -109,7 +112,8 @@
         end,
         availableMembers,
         maybeMembers,
-        unavailableMembers
+        unavailableMembers,
+        missingMembers
       });
     }
 
@@ -124,8 +128,10 @@
           current.availableMembers.every(m => next.availableMembers.some(n => n.github === m.github));
         const sameMaybe = current.maybeMembers.length === next.maybeMembers.length &&
           current.maybeMembers.every(m => next.maybeMembers.some(n => n.github === m.github));
+        const sameMissing = current.missingMembers.length === next.missingMembers.length &&
+          current.missingMembers.every(m => next.missingMembers.some(n => n.github === m.github));
 
-        if (sameAvail && sameMaybe) {
+        if (sameAvail && sameMaybe && sameMissing) {
           // Merge
           current.end = next.end;
         } else {
@@ -137,7 +143,7 @@
     }
 
     // Filter and compute scores
-    const totalActive = activeMembers.length;
+    const totalActive = Math.max(activeMembers.length, expectedMembers);
     const results = merged
       .filter(inv => inv.end - inv.start >= 30) // Minimum 30 min block
       .map(inv => {
@@ -158,6 +164,8 @@
           availableMembers: inv.availableMembers,
           maybeMembers: inv.maybeMembers,
           unavailableMembers: inv.unavailableMembers,
+          missingMembers: inv.missingMembers,
+          awaitingCount: totalActive - inv.availableMembers.length - inv.maybeMembers.length - inv.unavailableMembers.length,
           availableCount: availCount,
           maybeCount,
           totalActiveMembers: totalActive,
@@ -178,6 +186,63 @@
     return results;
   }
 
+  function validateSlot(slot) {
+    if (!slot || typeof slot !== 'object' || !/^\d{4}-\d{2}-\d{2}$/.test(slot.date || '')) return false;
+    const date = new Date(slot.date + 'T12:00:00Z');
+    if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== slot.date) return false;
+    const timePattern = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+    if (!timePattern.test(slot.startTime || '') || !timePattern.test(slot.endTime || '')) return false;
+    return timeToMinutes(slot.endTime) > timeToMinutes(slot.startTime) &&
+      ['available', 'maybe', 'unavailable'].includes(slot.status || 'available') &&
+      (slot.note === undefined || typeof slot.note === 'string');
+  }
+
+  function cleanSlots(slots) {
+    return slots.filter(validateSlot).map(s => ({ date: s.date, startTime: s.startTime,
+      endTime: s.endTime, status: s.status || 'available', note: (s.note || '').slice(0, 500) }));
+  }
+
+  // A shared parser keeps the published snapshot and live agenda consistent.
+  function buildAgendaData(members, issues, expectedMembers = 5) {
+    const allowed = new Map(members.filter(m => m.active !== false).map(m => [m.github.toLowerCase(), m]));
+    const entries = new Map();
+    const confirmedRehearsals = [];
+    const ordered = issues.filter(i => !i.pull_request && i.state !== 'closed').sort((a, b) =>
+      String(a.updated_at || '').localeCompare(String(b.updated_at || '')) || a.number - b.number);
+    for (const issue of ordered) {
+      const login = (issue.user?.login || '').toLowerCase();
+      const labels = (issue.labels || []).map(l => (typeof l === 'string' ? l : l.name || '').toLowerCase());
+      if (labels.includes('ensaio-confirmado')) {
+        if (login === 'foxnove') {
+          const rehearsal = parseConfirmedRehearsalBody(issue.body, login, issue.number, issue.html_url);
+          if (rehearsal && validateSlot({ ...rehearsal, status: 'available' })) confirmedRehearsals.push(rehearsal);
+        }
+        continue;
+      }
+      if (!allowed.has(login) || !(labels.includes('disponibilidade') || /^(?:\[Disponibilidade\]:|Disponibilidade\s*-)/i.test(issue.title || ''))) continue;
+      const slots = parseAvailabilityIssueBody(issue.body);
+      if (!slots.length) continue;
+      if (!entries.has(login)) {
+        const member = allowed.get(login);
+        entries.set(login, { github: member.github, name: member.name, instrument: member.instrument, slots: [] });
+      }
+      const entry = entries.get(login);
+      // Each issue is an independent answer. Keep all dates, suppress duplicate intervals.
+      for (const slot of slots) {
+        const duplicate = entry.slots.findIndex(s => s.date === slot.date && s.startTime === slot.startTime && s.endTime === slot.endTime);
+        if (duplicate >= 0) entry.slots[duplicate] = slot;
+        else entry.slots.push(slot);
+      }
+      entry.issueNumber = issue.number;
+      entry.issueUrl = issue.html_url;
+      entry.updatedAt = issue.updated_at;
+    }
+    const availability = Array.from(entries.values());
+    availability.forEach(entry => entry.slots.sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime)));
+    return { generatedAt: new Date().toISOString(), expectedMembers,
+      members: members.filter(m => entries.has(m.github.toLowerCase())), availability, confirmedRehearsals };
+  }
+
   // Parse structured GitHub Issue markdown into availability slots
   function parseAvailabilityIssueBody(bodyText) {
     if (!bodyText || typeof bodyText !== 'string') return [];
@@ -189,7 +254,7 @@
       try {
         const parsed = JSON.parse(jsonMatch[1]);
         if (Array.isArray(parsed)) {
-          return parsed.filter(s => s.date && s.startTime && s.endTime);
+          return cleanSlots(parsed);
         }
       } catch (e) {}
     }
@@ -197,7 +262,7 @@
     // Approach 2: Markdown lines
     // Example format:
     // - Data: 2026-10-16 | Horário: 18:00 - 22:00 | Status: DISPONÍVEL | Obs: ...
-    const lines = bodyText.split('\n');
+    const lines = bodyText.replace(/\*\*/g, '').split('\n');
     for (const line of lines) {
       const dateMatch = line.match(/(?:Data:\s*|###\s*)(\d{4}-\d{2}-\d{2})/);
       const timeMatch = line.match(/(\d{1,2}:\d{2})\s*(?:-|–|a|às|to)\s*(\d{1,2}:\d{2})/);
@@ -223,7 +288,7 @@
       }
     }
 
-    return slots;
+    return cleanSlots(slots);
   }
 
   // Parse confirmed rehearsal issue body
@@ -281,6 +346,8 @@
     minutesToTime,
     formatDateDisplay,
     calculateIntersectionsForDate,
+    validateSlot,
+    buildAgendaData,
     parseAvailabilityIssueBody,
     parseConfirmedRehearsalBody
   };

@@ -1,5 +1,6 @@
 {
-  "generatedAt": "2026-10-09T18:00:00.000Z",
+  "generatedAt": "2026-10-09T19:13:33.639Z",
+  "expectedMembers": 5,
   "members": [
     {
       "github": "foxnove",
@@ -7,20 +8,6 @@
       "instrument": "Voz / Violão",
       "active": true,
       "admin": true
-    },
-    {
-      "github": "baixo-fox",
-      "name": "Baixo",
-      "instrument": "Baixo",
-      "active": true,
-      "admin": false
-    },
-    {
-      "github": "batera-fox",
-      "name": "Bateria",
-      "instrument": "Bateria",
-      "active": true,
-      "admin": false
     }
   ],
   "availability": [
@@ -28,87 +15,26 @@
       "github": "foxnove",
       "name": "Diego Fox",
       "instrument": "Voz / Violão",
-      "issueNumber": 1,
-      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/1",
-      "updatedAt": "2026-10-09T18:00:00.000Z",
       "slots": [
         {
           "date": "2026-10-16",
-          "startTime": "18:00",
-          "endTime": "23:00",
+          "startTime": "19:00",
+          "endTime": "22:00",
           "status": "available",
-          "note": "Disponível a noite inteira"
+          "note": ""
         },
         {
-          "date": "2026-10-17",
-          "startTime": "14:00",
-          "endTime": "20:00",
+          "date": "2026-10-30",
+          "startTime": "19:00",
+          "endTime": "22:00",
           "status": "available",
-          "note": "Tarde livre"
+          "note": ""
         }
-      ]
-    },
-    {
-      "github": "baixo-fox",
-      "name": "Baixo",
-      "instrument": "Baixo",
+      ],
       "issueNumber": 2,
       "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/2",
-      "updatedAt": "2026-10-09T18:00:00.000Z",
-      "slots": [
-        {
-          "date": "2026-10-16",
-          "startTime": "19:30",
-          "endTime": "22:00",
-          "status": "available",
-          "note": "Chego às 19:30"
-        },
-        {
-          "date": "2026-10-17",
-          "startTime": "15:00",
-          "endTime": "19:00",
-          "status": "maybe",
-          "note": "Dependendo do trabalho"
-        }
-      ]
-    },
-    {
-      "github": "batera-fox",
-      "name": "Bateria",
-      "instrument": "Bateria",
-      "issueNumber": 3,
-      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/3",
-      "updatedAt": "2026-10-09T18:00:00.000Z",
-      "slots": [
-        {
-          "date": "2026-10-16",
-          "startTime": "20:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": "Consigo das 20h às 22h"
-        },
-        {
-          "date": "2026-10-17",
-          "startTime": "14:00",
-          "endTime": "18:00",
-          "status": "available",
-          "note": "Tarde liberada"
-        }
-      ]
+      "updatedAt": "2026-10-09T18:59:31Z"
     }
   ],
-  "confirmedRehearsals": [
-    {
-      "id": "ensaio-1",
-      "title": "Passagem de Repertório Completo",
-      "date": "2026-10-16",
-      "startTime": "20:00",
-      "endTime": "22:00",
-      "location": "Estúdio Fox",
-      "notes": "Foco na dinâmica das 13 faixas de Mesmo Tarde",
-      "issueNumber": 4,
-      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/4",
-      "author": "foxnove"
-    }
-  ]
+  "confirmedRehearsals": []
 }

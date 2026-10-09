@@ -55,6 +55,7 @@
     if (!token) {
       throw new Error('Token vazio.');
     }
+    clearSession();
 
     // Step 1: Validate token and user identity
     const userRes = await fetch('https://api.github.com/user', {
@@ -100,8 +101,42 @@
     const hasWritePermission = repoData.permissions && (repoData.permissions.push === true || repoData.permissions.admin === true);
 
     if (!hasWritePermission) {
-      throw new Error('O token não possui permissão de escrita ("Contents: Read and write") no repositório foxnove/mesmo-tarde.');
+      throw new Error('Sua conta não possui acesso de escrita ao repositório foxnove/mesmo-tarde.');
     }
+
+    // permissions.push describes the account, not the fine-grained token.
+    // Re-submit an existing content-addressed blob to exercise Contents: write.
+    // The exact same bytes yield the same SHA: no file, tree, commit or ref changes.
+    const headers = {
+      'Authorization': 'Bearer ' + token,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+    const fileRes = await fetch('https://api.github.com/repos/foxnove/mesmo-tarde/contents/songs_data.json?ref=main', { headers });
+    if (!fileRes.ok) {
+      throw new Error('Não foi possível verificar o acesso. Confira o repositório foxnove/mesmo-tarde e a permissão Contents: Read and write no token.');
+    }
+    const existingFile = await fileRes.json();
+    if (existingFile.type !== 'file' || existingFile.encoding !== 'base64' || typeof existingFile.content !== 'string' || !existingFile.sha) {
+      throw new Error('Não foi possível verificar o arquivo oficial. Nenhuma cifra foi alterada.');
+    }
+    const writeRes = await fetch('https://api.github.com/repos/foxnove/mesmo-tarde/git/blobs', {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: existingFile.content, encoding: 'base64' })
+    });
+    if (!writeRes.ok) {
+      if (writeRes.headers.get('x-ratelimit-remaining') === '0' || writeRes.status === 429) {
+        throw new Error('O GitHub atingiu o limite de consultas. Aguarde antes de tentar entrar novamente.');
+      }
+      if (writeRes.status === 401) throw new Error('Token inválido ou expirado. Entre novamente com um token válido.');
+      if (writeRes.status === 403 || writeRes.status === 404) {
+        throw new Error('O GitHub recusou a escrita. No token, selecione o proprietário foxnove, o repositório foxnove/mesmo-tarde e Contents: Read and write. Salve as permissões e entre novamente.');
+      }
+      throw new Error(`Não foi possível validar a escrita (HTTP ${writeRes.status}). Nenhuma cifra foi alterada.`);
+    }
+    const verifiedBlob = await writeRes.json();
+    if (verifiedBlob.sha !== existingFile.sha) throw new Error('A verificação de escrita retornou um resultado inesperado. Nenhuma cifra foi publicada.');
 
     // Store in-memory ONLY
     sessionGithubToken = token;
@@ -158,6 +193,8 @@
         showToast('Modo Artista liberado com sucesso!', 'success');
       }
     } catch (err) {
+      if (typeof global.isEditModeActive !== 'undefined') global.isEditModeActive = false;
+      if (typeof updateAuthUI === 'function') updateAuthUI();
       // Do NOT log token or headers
       if (errEl) {
         errEl.innerText = '❌ ' + (err.message || 'Erro na autenticação.');

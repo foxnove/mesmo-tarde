@@ -14,20 +14,62 @@
 
   const REPO_OWNER = 'foxnove';
   const REPO_NAME = 'mesmo-tarde';
+  let expectedMembers = 5;
+  let refreshing = false;
+
+  function escapeHtml(value) {
+    return String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+  }
+
+  function updateSummary(message) {
+    const summary = document.getElementById('responseSummary');
+    if (summary) summary.textContent = `${agendaData.availability.length} de ${expectedMembers} integrantes responderam • ${Math.max(0, expectedMembers - agendaData.availability.length)} aguardando resposta`;
+    const status = document.getElementById('syncStatus');
+    if (status) status.textContent = message;
+  }
+
+  function renderData() {
+    renderConfirmedRehearsals();
+    setupDateSelector();
+    renderActiveTab();
+  }
 
   async function loadData() {
+    if (refreshing) return;
+    refreshing = true;
+    updateSummary('Atualizando respostas…');
     try {
       const resp = await fetch('data.json?t=' + Date.now());
       if (resp.ok) {
         agendaData = await resp.json();
       }
+      renderData();
+      const responses = await Promise.all([fetch('members.json?t=' + Date.now()), fetch('config.json?t=' + Date.now())]);
+      if (responses.some(r => !r.ok)) throw new Error('Configuração indisponível');
+      const [members, config] = await Promise.all(responses.map(r => r.json()));
+      expectedMembers = config.expectedMembers;
+      const issues = [];
+      for (let page = 1; ; page++) {
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=open&per_page=100&page=${page}`, {
+          headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store'
+        });
+        if (!response.ok) throw new Error('GitHub indisponível');
+        const batch = await response.json();
+        if (!Array.isArray(batch)) throw new Error('Resposta inválida');
+        issues.push(...batch);
+        if (batch.length < 100) break;
+      }
+      agendaData = AgendaEngine.buildAgendaData(members, issues, expectedMembers);
+      renderData();
+      updateSummary('Respostas atualizadas agora. Disponibilidade não confirma um ensaio.');
     } catch (e) {
-      console.warn('Could not fetch data.json, falling back to local defaults:', e);
+      expectedMembers = agendaData.expectedMembers || expectedMembers;
+      renderData();
+      const savedAt = agendaData.generatedAt ? new Date(agendaData.generatedAt).toLocaleString('pt-BR') : '';
+      updateSummary(`Não foi possível atualizar. ${savedAt ? 'Mostrando a última atualização: ' + savedAt + '.' : 'Tente novamente.'}`);
+    } finally {
+      refreshing = false;
     }
-
-    renderConfirmedRehearsals();
-    setupDateSelector();
-    renderActiveTab();
   }
 
   function renderConfirmedRehearsals() {
@@ -103,24 +145,12 @@
       if (r.date) dates.add(r.date);
     });
 
-    // If empty, offer upcoming 7 days
-    if (dates.size === 0) {
-      const now = new Date();
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(now);
-        d.setDate(now.getDate() + i);
-        dates.add(d.toISOString().slice(0, 10));
-      }
-    }
-
     return Array.from(dates).sort();
   }
 
   function setupDateSelector() {
     const dates = getAllDates();
-    if (!selectedDate && dates.length > 0) {
-      selectedDate = dates[0];
-    }
+    if (!dates.includes(selectedDate)) selectedDate = dates[0] || null;
   }
 
   function switchTab(tab) {
@@ -135,6 +165,13 @@
     const container = document.getElementById('tabContentContainer');
     if (!container) return;
     container.innerHTML = '';
+    if (getAllDates().length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.innerHTML = '<h3>Aguardando as primeiras respostas</h3><p>Os dias, horários e integrantes aparecem depois do registro. A banda tem 5 integrantes.</p>';
+      container.appendChild(empty);
+      return;
+    }
 
     if (activeTab === 'windows') {
       renderBestWindows(container);
@@ -156,7 +193,8 @@
       const windows = AgendaEngine.calculateIntersectionsForDate(
         dateStr,
         agendaData.members,
-        agendaData.availability
+        agendaData.availability,
+        expectedMembers
       );
 
       if (windows.length === 0) return;
@@ -231,8 +269,8 @@
           row.className = 'musician-row';
           row.innerHTML = `
             <div>
-              <span class="musician-name">${m.name}</span>
-              <span class="musician-instrument">${m.instrument}</span>
+              <span class="musician-name">${escapeHtml(m.name)}</span>
+              <span class="musician-instrument">${escapeHtml(m.instrument)}</span>
             </div>
             <span class="status-pill available">🟢 Disponível</span>
           `;
@@ -244,8 +282,8 @@
           row.className = 'musician-row';
           row.innerHTML = `
             <div>
-              <span class="musician-name">${m.name}</span>
-              <span class="musician-instrument">${m.instrument}</span>
+              <span class="musician-name">${escapeHtml(m.name)}</span>
+              <span class="musician-instrument">${escapeHtml(m.instrument)}</span>
             </div>
             <span class="status-pill maybe">🟡 Talvez</span>
           `;
@@ -257,8 +295,8 @@
           row.className = 'musician-row';
           row.innerHTML = `
             <div>
-              <span class="musician-name">${m.name}</span>
-              <span class="musician-instrument">${m.instrument}</span>
+              <span class="musician-name">${escapeHtml(m.name)}</span>
+              <span class="musician-instrument">${escapeHtml(m.instrument)}</span>
             </div>
             <span class="status-pill unavailable">🔴 Indisponível</span>
           `;
@@ -266,6 +304,12 @@
         });
 
         card.appendChild(mList);
+        if (w.awaitingCount > 0) {
+          const awaiting = document.createElement('p');
+          awaiting.className = 'awaiting-message';
+          awaiting.textContent = `${w.awaitingCount} integrante${w.awaitingCount === 1 ? '' : 's'} ainda não informou disponibilidade neste intervalo.`;
+          card.appendChild(awaiting);
+        }
         grid.appendChild(card);
       });
 
@@ -351,10 +395,10 @@
       mHeader.style.alignItems = 'center';
       mHeader.innerHTML = `
         <div>
-          <strong style="font-size: 14px;">${member.name}</strong>
-          <span style="font-size: 11px; color: var(--text-muted); margin-left: 6px;">${member.instrument}</span>
+          <strong style="font-size: 14px;">${escapeHtml(member.name)}</strong>
+          <span style="font-size: 11px; color: var(--text-muted); margin-left: 6px;">${escapeHtml(member.instrument)}</span>
         </div>
-        <span style="font-size: 11px; color: var(--text-muted);">@${member.github}</span>
+        <span style="font-size: 11px; color: var(--text-muted);">@${escapeHtml(member.github)}</span>
       `;
       memberBlock.appendChild(mHeader);
 
@@ -430,7 +474,7 @@
 
       const nameTd = document.createElement('td');
       nameTd.style.padding = '12px 10px';
-      nameTd.innerHTML = `<strong>${member.name}</strong><br><span style="font-size: 10px; color: var(--text-muted);">${member.instrument}</span>`;
+      nameTd.innerHTML = `<strong>${escapeHtml(member.name)}</strong><br><span style="font-size: 10px; color: var(--text-muted);">${escapeHtml(member.instrument)}</span>`;
       tr.appendChild(nameTd);
 
       dates.forEach(d => {
@@ -468,11 +512,10 @@
     draftSlots = [];
     renderDraftSlots();
 
-    // Default date to today or tomorrow
-    const inputDate = document.getElementById('slotDateInput');
-    if (inputDate && !inputDate.value) {
-      inputDate.value = new Date().toISOString().slice(0, 10);
-    }
+    ['slotDateInput', 'slotStartInput', 'slotEndInput', 'slotNoteInput'].forEach(id => {
+      const input = document.getElementById(id);
+      if (input) input.value = '';
+    });
 
     if (modal) modal.showModal();
   }
@@ -495,8 +538,8 @@
       return;
     }
 
-    if (AgendaEngine.timeToMinutes(endTime) <= AgendaEngine.timeToMinutes(startTime)) {
-      alert('O horário final deve ser posterior ao horário inicial.');
+    if (!AgendaEngine.validateSlot({ date, startTime, endTime, status, note })) {
+      alert('Confira a data e os horários. O horário final deve ser posterior ao inicial, no mesmo dia.');
       return;
     }
 
@@ -591,6 +634,7 @@
   window.openRecordModal = openRecordModal;
   window.addDraftSlot = addDraftSlot;
   window.submitAvailabilityToGithub = submitAvailabilityToGithub;
+  window.refreshAgenda = loadData;
 
   document.addEventListener('DOMContentLoaded', loadData);
 })();

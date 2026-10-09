@@ -70,7 +70,14 @@
     const res = await fetch(url, { ...options, headers });
     if (!res.ok) {
       const errorBody = await res.json().catch(() => ({}));
-      const msg = errorBody.message || `HTTP ${res.status}`;
+      let msg = errorBody.message || `HTTP ${res.status}`;
+      if (res.headers.get('x-ratelimit-remaining') === '0' || res.status === 429 || /rate limit/i.test(msg)) {
+        msg = 'O GitHub atingiu o limite de consultas. Aguarde antes de tentar publicar novamente.';
+      } else if (res.status === 401) {
+        msg = 'O token expirou ou foi revogado. Use "Trocar token" e entre novamente. Suas edições continuam nesta página.';
+      } else if (/Resource not accessible by (?:personal access token|integration)/i.test(msg) || res.status === 404) {
+        msg = 'O token não tem o acesso necessário. Confira o proprietário foxnove, o repositório foxnove/mesmo-tarde e Contents: Read and write. Depois use "Trocar token". Suas edições continuam nesta página.';
+      }
       const err = new Error(msg);
       err.status = res.status;
       throw err;
@@ -228,7 +235,7 @@
       if (status) {
         status.style.background = '#dcfce7';
         status.style.color = '#15803d';
-        status.innerHTML = `🎉 <strong>Publicado com sucesso no GitHub!</strong><br>Commit: <code>${result.shortSha}</code><br>O <code>songs_data.json</code> e <code>songs_data.js</code> foram atualizados atomicamente. Em cerca de 30 a 60 segundos o GitHub Pages atualizará o site para todos!`;
+        status.innerHTML = `✅ <strong>Alterações salvas no GitHub!</strong><br>Commit: <code>${result.shortSha}</code><br>O site será atualizado quando a publicação automática do GitHub Pages terminar.`;
       }
       if (typeof showToast === 'function') {
         showToast(`✅ Publicado! Commit: ${result.shortSha}`, 'success');

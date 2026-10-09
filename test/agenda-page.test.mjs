@@ -26,7 +26,13 @@ async function withSite(check) {
     const file = normalize(join(root, relativePath));
     if (!file.startsWith(root)) { response.writeHead(403).end(); return; }
     try {
-      const content = await readFile(file);
+      let content = await readFile(file);
+      // Keep browser checks deterministic: exercise the real snapshot fallback,
+      // without depending on GitHub availability or API rate limits.
+      if (pathname === '/agenda/') {
+        content = Buffer.from(content.toString().replace('<script src="agenda-engine.js">',
+          `<script>const originalFetch = window.fetch; window.fetch = (url, options) => String(url).startsWith('https://api.github.com/') ? Promise.resolve(new Response('', {status:503})) : originalFetch(url, options);</script><script src="agenda-engine.js">`));
+      }
       response.writeHead(200, { 'Content-Type': mimeTypes[extname(file)] ?? 'application/octet-stream' });
       response.end(content);
     } catch { response.writeHead(404).end(); }
@@ -39,19 +45,12 @@ async function withSite(check) {
   }
 }
 
-test('Agenda page renders confirmed rehearsals and calculated intersection windows', async () => {
+test('Agenda renders both real answers, four pending musicians and no fake rehearsal', async () => {
   await withSite(async port => {
-    let stdout = '';
-    try {
-      const res = await run(getChromePath(), [
-        ...CHROME_FLAGS,
-        `http://127.0.0.1:${port}/agenda/`
-      ]);
-      stdout = res.stdout;
-    } catch {
-      const resp = await fetch(`http://127.0.0.1:${port}/agenda/`);
-      stdout = await resp.text();
-    }
+    const { stdout } = await run(getChromePath(), [
+      ...CHROME_FLAGS,
+      `http://127.0.0.1:${port}/agenda/`
+    ]);
 
     // Check header
     assert.match(stdout, /AGENDA FOX/);
@@ -60,5 +59,15 @@ test('Agenda page renders confirmed rehearsals and calculated intersection windo
     // Check modal and registration button
     assert.match(stdout, /id="recordModal"/);
     assert.match(stdout, /Registrar no GitHub/);
+    assert.match(stdout, /1 de 5 integrantes responderam/);
+    assert.match(stdout, /4 aguardando resposta/);
+    assert.match(stdout, /16 de Outubro/);
+    assert.match(stdout, /30 de Outubro/);
+    assert.match(stdout, /19:00 – 22:00/);
+    assert.doesNotMatch(stdout, /class="badge-ideal"/);
+    assert.doesNotMatch(stdout, /Passagem de Repertório Completo|Estúdio Fox|baixo-fox|batera-fox/);
+    assert.match(stdout, /id="slotStartInput"[^>]*>/);
+    assert.doesNotMatch(stdout, /id="slot(?:Date|Start|End)Input"[^>]*value="[^\"]+"/);
+    assert.match(stdout, /Não foi possível atualizar/);
   });
 });
