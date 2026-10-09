@@ -1,0 +1,37 @@
+name: Disponibilidade para Ensaio
+description: Informe seus dias e horários livres para ensaios da banda Mesmo Tarde
+title: "[Disponibilidade]: "
+labels: ["agenda", "disponibilidade"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🎸 Registro de Disponibilidade da Banda
+        Sua identidade é validada automaticamente pela sua conta GitHub (`github.event.issue.user.login`) em relação ao arquivo `agenda/members.json`.
+  - type: textarea
+    id: horarios
+    attributes:
+      label: Datas e Horários
+      description: Informe as datas e intervalos que você pode ensaiar. O formulário do site `/agenda/` preenche este campo automaticamente.
+      placeholder: |
+        - Data: 2026-10-16 | Horário: 18:00 - 22:00 | Status: DISPONÍVEL
+    validations:
+      required: true
+  - type: dropdown
+    id: status_geral
+    attributes:
+      label: Status Geral
+      options:
+        - "🟢 DISPONÍVEL"
+        - "🟡 TALVEZ"
+        - "🔴 INDISPONÍVEL"
+    validations:
+      required: true
+  - type: textarea
+    id: observacoes
+    attributes:
+      label: Observações (Opcional)
+      description: Algo que a banda deva saber (ex: atrasos, equipamentos).
+      placeholder: "Chego 15 minutos mais tarde devido ao trânsito."
+    validations:
+      required: false

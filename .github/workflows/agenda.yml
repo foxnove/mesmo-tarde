@@ -1,0 +1,62 @@
+name: Sincronização da Agenda da Banda
+
+on:
+  issues:
+    types: [opened, edited, reopened, closed, labeled, unlabeled]
+  workflow_dispatch:
+
+concurrency:
+  group: agenda-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: read
+  pages: write
+  id-token: write
+
+jobs:
+  sync-agenda:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Sincronizar Disponibilidade e Ensaios a partir das Issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node .github/scripts/sync-agenda.mjs
+
+      - name: Executar Testes de Regressão da Agenda
+        run: |
+          node --test test/agenda.test.mjs
+
+      - name: Salvar agenda/data.json atualizado no repositório
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add agenda/data.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(agenda): atualiza disponibilidade da banda [skip ci]" && git push)
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Empacotar Artefato para GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

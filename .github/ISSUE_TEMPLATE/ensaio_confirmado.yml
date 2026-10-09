@@ -1,0 +1,46 @@
+name: Ensaio Confirmado (Apenas Diego Fox)
+description: Confirmar ensaio oficial da banda (somente autorizado para o administrador foxnove)
+title: "[Ensaio Confirmado]: "
+labels: ["agenda", "ensaio-confirmado"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🎸 Agendamento Oficial de Ensaio
+        *Apenas ensaios cadastrados por @foxnove serão exibidos como confirmados na Agenda.*
+  - type: input
+    id: data
+    attributes:
+      label: Data do Ensaio
+      description: Formato AAAA-MM-DD
+      placeholder: "2026-10-16"
+    validations:
+      required: true
+  - type: input
+    id: horario_inicio
+    attributes:
+      label: Horário Inicial
+      placeholder: "20:00"
+    validations:
+      required: true
+  - type: input
+    id: horario_fim
+    attributes:
+      label: Horário Final
+      placeholder: "22:00"
+    validations:
+      required: true
+  - type: input
+    id: local
+    attributes:
+      label: Local do Ensaio
+      placeholder: "Estúdio Fox / Estúdio Central"
+    validations:
+      required: false
+  - type: textarea
+    id: observacoes
+    attributes:
+      label: Pauta ou Observações
+      placeholder: "Passagem das 13 músicas completas na ordem do álbum."
+    validations:
+      required: false
