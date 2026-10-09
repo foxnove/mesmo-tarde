@@ -5,5 +5,12 @@
     "instrument": "Voz / Violão",
     "active": true,
     "admin": true
+  },
+  {
+    "github": "danrdfig-tech",
+    "name": "Danilo",
+    "instrument": "",
+    "active": true,
+    "admin": false
   }
 ]

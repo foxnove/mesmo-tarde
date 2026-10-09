@@ -45,7 +45,7 @@ async function withSite(check) {
   }
 }
 
-test('Agenda renders both real answers, four pending musicians and no fake rehearsal', async () => {
+test('Agenda renders Diego and Danilo answers, three pending musicians and no fake rehearsal', async () => {
   await withSite(async port => {
     const { stdout } = await run(getChromePath(), [
       ...CHROME_FLAGS,
@@ -59,8 +59,10 @@ test('Agenda renders both real answers, four pending musicians and no fake rehea
     // Check modal and registration button
     assert.match(stdout, /id="recordModal"/);
     assert.match(stdout, /Registrar no GitHub/);
-    assert.match(stdout, /1 de 5 integrantes responderam/);
-    assert.match(stdout, /4 aguardando resposta/);
+    assert.match(stdout, /2 de 5 integrantes responderam/);
+    assert.match(stdout, /3 aguardando resposta/);
+    assert.match(stdout, /Danilo/);
+    assert.match(stdout, /26 de Outubro/);
     assert.match(stdout, /16 de Outubro/);
     assert.match(stdout, /30 de Outubro/);
     assert.match(stdout, /19:00 – 22:00/);
