@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-09T20:53:20.164Z",
+  "generatedAt": "2026-10-09T20:57:52.518Z",
   "expectedMembers": 5,
   "members": [
     {
@@ -38,6 +38,13 @@
           "note": ""
         },
         {
+          "date": "2026-10-26",
+          "startTime": "19:00",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        },
+        {
           "date": "2026-10-27",
           "startTime": "21:00",
           "endTime": "23:00",
@@ -52,9 +59,9 @@
           "note": ""
         }
       ],
-      "issueNumber": 4,
-      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/4",
-      "updatedAt": "2026-10-09T19:58:31Z"
+      "issueNumber": 9,
+      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/9",
+      "updatedAt": "2026-10-09T20:57:38Z"
     },
     {
       "github": "danrdfig-tech",
