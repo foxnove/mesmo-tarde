@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-12T12:19:26.651Z",
+  "generatedAt": "2026-10-12T12:33:00.000Z",
   "expectedMembers": 5,
   "members": [
     {
@@ -15,6 +15,13 @@
       "instrument": "",
       "active": true,
       "admin": false
+    },
+    {
+      "github": "DiogoDimazz",
+      "name": "DiogoDimazz",
+      "instrument": "",
+      "active": true,
+      "admin": false
     }
   ],
   "availability": [
@@ -23,41 +30,11 @@
       "name": "Diego Fox",
       "instrument": "Voz / Violão",
       "slots": [
-        {
-          "date": "2026-10-14",
-          "startTime": "20:00",
-          "endTime": "23:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-16",
-          "startTime": "19:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-26",
-          "startTime": "19:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-27",
-          "startTime": "21:00",
-          "endTime": "23:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-30",
-          "startTime": "19:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        }
+        { "date": "2026-10-14", "startTime": "20:00", "endTime": "23:00", "status": "available", "note": "" },
+        { "date": "2026-10-16", "startTime": "19:00", "endTime": "22:00", "status": "available", "note": "" },
+        { "date": "2026-10-26", "startTime": "19:00", "endTime": "22:00", "status": "available", "note": "" },
+        { "date": "2026-10-27", "startTime": "21:00", "endTime": "23:00", "status": "available", "note": "" },
+        { "date": "2026-10-30", "startTime": "19:00", "endTime": "22:00", "status": "available", "note": "" }
       ],
       "issueNumber": 9,
       "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/9",
@@ -68,31 +45,37 @@
       "name": "Danilo",
       "instrument": "",
       "slots": [
-        {
-          "date": "2026-10-26",
-          "startTime": "19:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-30",
-          "startTime": "19:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-11-04",
-          "startTime": "19:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        }
+        { "date": "2026-10-26", "startTime": "19:00", "endTime": "22:00", "status": "available", "note": "" },
+        { "date": "2026-10-30", "startTime": "19:00", "endTime": "22:00", "status": "available", "note": "" },
+        { "date": "2026-11-04", "startTime": "19:00", "endTime": "22:00", "status": "available", "note": "" }
       ],
       "issueNumber": 10,
       "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/10",
       "updatedAt": "2026-10-09T21:56:18Z"
+    },
+    {
+      "github": "DiogoDimazz",
+      "name": "DiogoDimazz",
+      "instrument": "",
+      "slots": [
+        { "date": "2026-10-13", "startTime": "16:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-14", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-15", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-16", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-19", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-20", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-21", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-22", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-23", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-26", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-27", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-28", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-29", "startTime": "18:00", "endTime": "23:59", "status": "available", "note": "" },
+        { "date": "2026-10-30", "startTime": "18:00", "endTime": "21:00", "status": "maybe", "note": "" }
+      ],
+      "issueNumber": 11,
+      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/11",
+      "updatedAt": "2026-10-12T12:18:49Z"
     }
   ],
   "confirmedRehearsals": []
