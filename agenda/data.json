@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13T17:14:59.838Z",
+  "generatedAt": "2026-10-13T17:16:50.519Z",
   "expectedMembers": 5,
   "members": [
     {
@@ -26,6 +26,13 @@
     {
       "github": "alencarrafael",
       "name": "Rafael",
+      "instrument": "",
+      "active": true,
+      "admin": false
+    },
+    {
+      "github": "allanvillas-sudo",
+      "name": "Allan",
       "instrument": "",
       "active": true,
       "admin": false
@@ -267,6 +274,23 @@
       "issueNumber": 11,
       "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/11",
       "updatedAt": "2026-10-13T16:35:06Z"
+    },
+    {
+      "github": "allanvillas-sudo",
+      "name": "Allan",
+      "instrument": "",
+      "slots": [
+        {
+          "date": "2026-10-30",
+          "startTime": "19:00",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        }
+      ],
+      "issueNumber": 13,
+      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/13",
+      "updatedAt": "2026-10-13T17:16:37Z"
     }
   ],
   "confirmedRehearsals": []
