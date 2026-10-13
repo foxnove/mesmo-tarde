@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13T14:54:00.000Z",
+  "generatedAt": "2026-10-13T16:33:44.136Z",
   "expectedMembers": 5,
   "members": [
     {
@@ -109,6 +109,58 @@
       "updatedAt": "2026-10-09T21:56:18Z"
     },
     {
+      "github": "alencarrafael",
+      "name": "Rafael",
+      "instrument": "",
+      "slots": [
+        {
+          "date": "2026-10-14",
+          "startTime": "19:30",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        },
+        {
+          "date": "2026-10-15",
+          "startTime": "20:00",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        },
+        {
+          "date": "2026-10-19",
+          "startTime": "19:00",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        },
+        {
+          "date": "2026-10-21",
+          "startTime": "19:30",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        },
+        {
+          "date": "2026-10-28",
+          "startTime": "19:30",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        },
+        {
+          "date": "2026-10-30",
+          "startTime": "20:00",
+          "endTime": "22:00",
+          "status": "available",
+          "note": ""
+        }
+      ],
+      "issueNumber": 12,
+      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/12",
+      "updatedAt": "2026-10-13T14:51:16Z"
+    },
+    {
       "github": "DiogoDimazz",
       "name": "DiogoDimazz",
       "instrument": "",
@@ -116,7 +168,7 @@
         {
           "date": "2026-10-13",
           "startTime": "16:00",
-          "endTime": "23:59",
+          "endTime": "00:00",
           "status": "available",
           "note": ""
         },
@@ -151,7 +203,7 @@
         {
           "date": "2026-10-20",
           "startTime": "18:00",
-          "endTime": "23:59",
+          "endTime": "00:00",
           "status": "available",
           "note": ""
         },
@@ -214,59 +266,7 @@
       ],
       "issueNumber": 11,
       "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/11",
-      "updatedAt": "2026-10-12T12:18:49Z"
-    },
-    {
-      "github": "alencarrafael",
-      "name": "Rafael",
-      "instrument": "",
-      "slots": [
-        {
-          "date": "2026-10-14",
-          "startTime": "19:30",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-15",
-          "startTime": "20:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-21",
-          "startTime": "19:30",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-19",
-          "startTime": "19:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-28",
-          "startTime": "19:30",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        },
-        {
-          "date": "2026-10-30",
-          "startTime": "20:00",
-          "endTime": "22:00",
-          "status": "available",
-          "note": ""
-        }
-      ],
-      "issueNumber": 12,
-      "issueUrl": "https://github.com/foxnove/mesmo-tarde/issues/12",
-      "updatedAt": "2026-10-13T14:51:16Z"
+      "updatedAt": "2026-10-13T16:33:39Z"
     }
   ],
   "confirmedRehearsals": []
