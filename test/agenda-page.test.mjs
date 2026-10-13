@@ -19,7 +19,7 @@ const mimeTypes = {
   '.png': 'image/png'
 };
 
-async function withSite(check) {
+async function withSite(check, bootstrap = '') {
   const server = createServer(async (request, response) => {
     const pathname = new URL(request.url, 'http://localhost').pathname;
     const relativePath = pathname.endsWith('/') ? `${pathname.replace(/^\//, '')}index.html` : pathname.replace(/^\//, '');
@@ -31,7 +31,16 @@ async function withSite(check) {
       // without depending on GitHub availability or API rate limits.
       if (pathname === '/agenda/') {
         content = Buffer.from(content.toString().replace('<script src="agenda-engine.js">',
-          `<script>const originalFetch = window.fetch; window.fetch = (url, options) => String(url).startsWith('https://api.github.com/') ? Promise.resolve(new Response('', {status:503})) : originalFetch(url, options);</script><script src="agenda-engine.js">`));
+          `<script>const originalFetch = window.fetch; window.fetch = (url, options) => String(url).startsWith('https://api.github.com/') ? Promise.resolve(new Response('', {status:503})) : originalFetch(url, options);</script><script src="agenda-engine.js">`)
+          .replace('</body>', bootstrap + '</body>'));
+      }
+      if (pathname === '/agenda/data.json') {
+        // Keep this two-response fallback fixture stable as other members join.
+        const data = JSON.parse(content);
+        data.members = data.members.filter(m => ['foxnove', 'danrdfig-tech'].includes(m.github));
+        data.availability = data.availability.filter(m => ['foxnove', 'danrdfig-tech'].includes(m.github));
+        data.confirmedRehearsals = [];
+        content = Buffer.from(JSON.stringify(data));
       }
       response.writeHead(200, { 'Content-Type': mimeTypes[extname(file)] ?? 'application/octet-stream' });
       response.end(content);
@@ -45,7 +54,7 @@ async function withSite(check) {
   }
 }
 
-test('Agenda renders Diego and Danilo answers, three pending musicians and no fake rehearsal', async () => {
+test('Agenda renders a two-response snapshot, three pending musicians and no fake rehearsal', async () => {
   await withSite(async port => {
     const { stdout } = await run(getChromePath(), [
       ...CHROME_FLAGS,
@@ -72,4 +81,47 @@ test('Agenda renders Diego and Danilo answers, three pending musicians and no fa
     assert.doesNotMatch(stdout, /id="slot(?:Date|Start|End)Input"[^>]*value="[^\"]+"/);
     assert.match(stdout, /Não foi possível atualizar/);
   });
+});
+
+test('Real mobile browser signs in, edits its own slot, shows a star and blocks a short slot', async () => {
+  const bootstrap = `<script>
+    const members = Array.from({length:5}, (_, i) => ({github:i ? 'm'+i : 'foxnove', name:'M'+i, active:true}));
+    const slot = {date:'2026-10-16',startTime:'19:00',endTime:'21:00',status:'available'};
+    const issues = members.map((m,i) => ({number:i+1,state:'open',user:{login:m.github},title:'Disponibilidade - outubro',labels:[],updated_at:'2026-10-13',body:AgendaGithub.body([slot])}));
+    const alerts = []; window.alert = message => alerts.push(message);
+    window.fetch = async (url, options={}) => {
+      let data;
+      if (String(url).includes('members.json')) data = members;
+      else if (String(url).includes('config.json')) data = {expectedMembers:5};
+      else if (String(url).includes('data.json')) data = AgendaEngine.buildAgendaData(members, issues, 5);
+      else if (String(url).endsWith('/user')) data = {login:'foxnove'};
+      else if (String(url).includes('issues?')) data = issues;
+      else { data = issues.find(i => i.number === Number(String(url).split('/').at(-1))); if(options.method==='PATCH') Object.assign(data,JSON.parse(options.body)); }
+      return new Response(JSON.stringify(data),{status:200});
+    };
+    window.addEventListener('load', () => setTimeout(async () => {
+      try {
+        await refreshAgenda();
+        if (!document.querySelector('.perfect-star')) throw Error('missing star');
+        document.getElementById('loginModal').showModal();
+        document.getElementById('githubTokenInput').value = 'test-token';
+        await signInAgenda();
+        const edit = Array.from(document.querySelectorAll('#mySlotsContainer button')).find(b=>b.textContent==='Editar');
+        edit.click();
+        if (!document.getElementById('recordModal').open || !document.getElementById('draftBuilder').hidden) throw Error('incorrect edit modal');
+        document.getElementById('slotEndInput').value='20:59'; await saveSlotEdit();
+        if (!alerts.at(-1).includes('2 horas')) throw Error('missing duration alert');
+        document.getElementById('slotEndInput').value='21:00'; document.getElementById('slotStartInput').value='18:00';
+        await saveSlotEdit();
+        if (!document.getElementById('mySlotsContainer').textContent.includes('18:00')) throw Error('edit missing');
+        if (document.getElementById('recordModal').open) throw Error('modal did not close');
+        if (document.documentElement.scrollWidth > innerWidth) throw Error('mobile overflow');
+        document.body.setAttribute('data-agenda-check','passed');
+      } catch(e) { document.body.setAttribute('data-agenda-check',e.message); }
+    },100));
+  </script>`;
+  await withSite(async port => {
+    const { stdout } = await run(getChromePath(), [...CHROME_FLAGS, '--window-size=390,844', `http://127.0.0.1:${port}/agenda/`]);
+    assert.match(stdout, /data-agenda-check="passed"/);
+  }, bootstrap);
 });

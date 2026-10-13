@@ -590,6 +590,24 @@ dialog::backdrop {
 }
 
 /* Responsive */
+[hidden] { display: none !important; }
+.minimum-info { padding: 12px 16px; margin: 0 0 18px; border: 1px solid rgba(251, 191, 36, .4); background: rgba(251, 191, 36, .07); border-radius: 10px; color: #fde68a; font-size: 13px; line-height: 1.6; }
+.minimum-warning { margin-top: 12px; color: #fbbf24; font-size: 12px; line-height: 1.5; }
+.manage-section { margin-bottom: 26px; padding: 18px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; }
+.manage-header { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+.manage-header h2 { font-size: 16px; margin-bottom: 6px; }
+.manage-header p, #mySlotsContainer { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+.my-slot-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-top: 14px; margin-top: 14px; border-top: 1px solid var(--border-color); }
+.slot-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-danger { background: rgba(239, 68, 68, .08); border: 1px solid rgba(239, 68, 68, .5); color: #fca5a5; padding: 9px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+.confirmed-card .btn-danger { margin-top: 16px; }
+button:disabled { opacity: .5; cursor: wait; }
+.window-card { position: relative; }
+.window-card.ideal { border-color: #fbbf24; box-shadow: 0 0 0 1px rgba(251, 191, 36, .18), 0 8px 30px rgba(251, 191, 36, .1); padding-top: 34px; }
+.perfect-star { position: absolute; top: -13px; right: 12px; font-size: 30px; color: #fbbf24; background: var(--bg-card); border-radius: 50%; width: 40px; height: 40px; text-align: center; line-height: 40px; text-shadow: 0 0 12px rgba(251, 191, 36, .4); }
+.login-help { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+#loginModal a { color: #93c5fd; font-size: 13px; }
+#loginStatus { color: #fbbf24; font-size: 13px; }
 .response-summary {
   display: flex;
   align-items: center;
@@ -607,6 +625,7 @@ dialog::backdrop {
 button:focus-visible, a:focus-visible { outline: 2px solid #34d399; outline-offset: 4px; }
 
 @media (max-width: 640px) {
+  .manage-header, .my-slot-row { align-items: flex-start; flex-direction: column; }
   .response-summary { align-items: flex-start; flex-direction: column; }
   .agenda-header {
     padding: 12px 14px;

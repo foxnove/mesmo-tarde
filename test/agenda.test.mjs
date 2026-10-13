@@ -88,14 +88,15 @@ test('Interval intersection algorithm matches prompt specification', () => {
   const intersections = AgendaEngine.calculateIntersectionsForDate('2026-10-16', members, availability);
   assert.ok(intersections.length > 0);
 
-  // The top / ideal window should be 20:00 to 21:30 with all 3 musicians
+  // Full attendance still ranks first, but 90 minutes cannot be ideal.
   const best = intersections[0];
   assert.equal(best.startTime, '20:00');
   assert.equal(best.endTime, '21:30');
   assert.equal(best.availableCount, 3);
   assert.equal(best.totalActiveMembers, 3);
   assert.equal(best.percent, 100);
-  assert.equal(best.isIdeal, true);
+  assert.equal(best.isIdeal, false);
+  assert.equal(best.tooShort, true);
 });
 
 test('Interval calculation handles partial overlaps and maybe status', () => {

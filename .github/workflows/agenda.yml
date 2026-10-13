@@ -40,7 +40,7 @@ jobs:
 
       - name: Executar Testes de Regressão da Agenda
         run: |
-          node --test test/agenda.test.mjs
+          node --test test/agenda.test.mjs test/agenda-edit.test.mjs test/agenda-controls.test.mjs
 
       - name: Salvar agenda/data.json atualizado no repositório
         run: |

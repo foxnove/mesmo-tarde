@@ -16,6 +16,11 @@
   const REPO_NAME = 'mesmo-tarde';
   let expectedMembers = 5;
   let refreshing = false;
+  const githubSession = new AgendaGithub((...args) => fetch(...args));
+  let registeredMembers = [];
+  let liveIssues = null;
+  let editingSlot = null;
+  let saving = false;
 
   function escapeHtml(value) {
     return String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -32,10 +37,11 @@
     renderConfirmedRehearsals();
     setupDateSelector();
     renderActiveTab();
+    renderMySlots();
   }
 
   async function loadData() {
-    if (refreshing) return;
+    if (refreshing || saving) return;
     refreshing = true;
     updateSummary('Atualizando respostas…');
     try {
@@ -47,6 +53,7 @@
       const responses = await Promise.all([fetch('members.json?t=' + Date.now()), fetch('config.json?t=' + Date.now())]);
       if (responses.some(r => !r.ok)) throw new Error('Configuração indisponível');
       const [members, config] = await Promise.all(responses.map(r => r.json()));
+      registeredMembers = members;
       expectedMembers = config.expectedMembers;
       const issues = [];
       for (let page = 1; ; page++) {
@@ -60,9 +67,11 @@
         if (batch.length < 100) break;
       }
       agendaData = AgendaEngine.buildAgendaData(members, issues, expectedMembers);
+      liveIssues = issues;
       renderData();
       updateSummary('Respostas atualizadas agora. Disponibilidade não confirma um ensaio.');
     } catch (e) {
+      liveIssues = null;
       expectedMembers = agendaData.expectedMembers || expectedMembers;
       renderData();
       const savedAt = agendaData.generatedAt ? new Date(agendaData.generatedAt).toLocaleString('pt-BR') : '';
@@ -125,6 +134,14 @@
         notes.className = 'confirmed-notes';
         notes.textContent = `Observação: ${item.notes}`;
         card.appendChild(notes);
+      }
+
+      if (githubSession.user === 'foxnove' && liveIssues) {
+        const issue = liveIssues.find(i => i.number === item.issueNumber);
+        if (issue) card.appendChild(actionButton('Excluir ensaio', async () => {
+          if (!confirm('Excluir este ensaio confirmado da agenda?')) return;
+          await performWrite(() => githubSession.deleteRehearsal(issue));
+        }, 'btn-danger'));
       }
 
       container.appendChild(card);
@@ -220,6 +237,14 @@
       windows.forEach(w => {
         const card = document.createElement('div');
         card.className = 'window-card ' + (w.isIdeal ? 'ideal' : '');
+        if (w.isIdeal) {
+          const star = document.createElement('span');
+          star.className = 'perfect-star';
+          star.textContent = '★';
+          star.setAttribute('aria-label', 'Horário perfeito: os 5 integrantes disponíveis por pelo menos 2 horas');
+          star.title = 'Horário perfeito para marcar: banda completa!';
+          card.appendChild(star);
+        }
 
         const top = document.createElement('div');
         top.className = 'card-top';
@@ -240,7 +265,7 @@
         if (w.isIdeal) {
           const badge = document.createElement('span');
           badge.className = 'badge-ideal';
-          badge.textContent = '✅ HORÁRIO IDEAL';
+          badge.textContent = 'HORÁRIO PERFEITO · 5/5';
           top.appendChild(badge);
         } else {
           const badge = document.createElement('span');
@@ -304,6 +329,12 @@
         });
 
         card.appendChild(mList);
+        if (w.tooShort) {
+          const warning = document.createElement('p');
+          warning.className = 'minimum-warning';
+          warning.textContent = 'Intervalo insuficiente: o mínimo é 2 horas de ensaio.';
+          card.appendChild(warning);
+        }
         if (w.awaitingCount > 0) {
           const awaiting = document.createElement('p');
           awaiting.className = 'awaiting-message';
@@ -508,6 +539,8 @@
 
   // Availability Registration Modal
   function openRecordModal() {
+    editingSlot = null;
+    setEditMode(false);
     const modal = document.getElementById('recordModal');
     draftSlots = [];
     renderDraftSlots();
@@ -518,6 +551,136 @@
     });
 
     if (modal) modal.showModal();
+  }
+
+  function actionButton(label, onclick, className = 'btn-secondary') {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = className;
+    button.textContent = label; button.onclick = onclick;
+    button.disabled = saving;
+    return button;
+  }
+
+  function renderMySlots() {
+    const container = document.getElementById('mySlotsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    const user = githubSession.user;
+    document.getElementById('agendaIdentity').textContent = user ? 'Conectado como @' + user : 'Entre para editar ou apagar seus horários.';
+    document.getElementById('agendaLoginButton').hidden = !!user;
+    document.getElementById('agendaLogoutButton').hidden = !user;
+    if (!user) return;
+    if (!liveIssues) {
+      container.textContent = 'Atualize as respostas para gerenciar seus horários. A edição precisa de conexão com o GitHub.';
+      return;
+    }
+    container.textContent = '';
+    const own = liveIssues.filter(i => i.state === 'open' && (i.user?.login || '').toLowerCase() === user && AgendaGithub.isAvailability(i));
+    let count = 0;
+    own.forEach(issue => {
+      AgendaEngine.parseAvailabilityIssueBody(issue.body).forEach((slot, index) => {
+        count++;
+        const row = document.createElement('div'); row.className = 'my-slot-row';
+        const text = document.createElement('span');
+        const status = slot.status === 'available' ? 'Disponível' : slot.status === 'maybe' ? 'Talvez' : 'Indisponível';
+        text.textContent = `${AgendaEngine.formatDateDisplay(slot.date)} · ${slot.startTime} às ${slot.endTime} · ${status}${slot.note ? ' · ' + slot.note : ''}`;
+        row.appendChild(text);
+        const actions = document.createElement('div'); actions.className = 'slot-actions';
+        actions.appendChild(actionButton('Editar', () => {
+          editingSlot = { issue, index }; setEditMode(true);
+          document.getElementById('slotDateInput').value = slot.date;
+          document.getElementById('slotStartInput').value = slot.startTime;
+          document.getElementById('slotEndInput').value = slot.endTime;
+          document.getElementById('slotStatusInput').value = slot.status;
+          document.getElementById('slotNoteInput').value = slot.note || '';
+          document.getElementById('recordModal').showModal();
+        }));
+        actions.appendChild(actionButton('Apagar', async () => {
+          if (!confirm(`Apagar seu horário de ${slot.date}, das ${slot.startTime} às ${slot.endTime}?`)) return;
+          await performWrite(() => githubSession.updateSlot(issue, index, null));
+        }, 'btn-danger'));
+        row.appendChild(actions); container.appendChild(row);
+      });
+    });
+    if (!count) container.textContent = 'Você ainda não tem horários registrados.';
+  }
+
+  function setEditMode(editing) {
+    document.getElementById('recordModalTitle').textContent = editing ? 'Editar meu horário' : 'Registrar Disponibilidade';
+    document.getElementById('draftBuilder').hidden = editing;
+    document.getElementById('addDraftButton').hidden = editing;
+    document.getElementById('submitDraftButton').hidden = editing;
+    document.getElementById('saveEditButton').hidden = !editing;
+  }
+
+  async function signInAgenda() {
+    const input = document.getElementById('githubTokenInput');
+    const token = input.value; input.value = '';
+    const button = document.getElementById('signInAgendaButton');
+    button.disabled = true;
+    const status = document.getElementById('loginStatus');
+    status.textContent = 'Verificando conta…';
+    try {
+      if (!registeredMembers.length) {
+        const response = await fetch('members.json?t=' + Date.now());
+        if (!response.ok) throw new Error('Não foi possível verificar os integrantes. Tente novamente.');
+        registeredMembers = await response.json();
+      }
+      await githubSession.login(token, registeredMembers);
+      status.textContent = '';
+      document.getElementById('loginModal').close();
+      await loadData();
+    } catch (e) { status.textContent = e.message; }
+    finally { button.disabled = false; renderData(); }
+  }
+
+  function signOutAgenda() {
+    githubSession.logout(); editingSlot = null;
+    document.getElementById('recordModal').close(); renderData();
+  }
+
+  async function performWrite(operation) {
+    if (saving) return false;
+    if (refreshing) {
+      alert('Aguarde a atualização das respostas terminar antes de salvar.');
+      return false;
+    }
+    saving = true;
+    document.getElementById('saveEditButton').disabled = true;
+    renderData();
+    try {
+      const updated = await operation();
+      const index = liveIssues.findIndex(i => i.number === updated.number);
+      if (index >= 0) liveIssues[index] = updated;
+      agendaData = AgendaEngine.buildAgendaData(registeredMembers, liveIssues, expectedMembers);
+      updateSummary('Alteração salva no GitHub.');
+      return true;
+    } catch (e) { alert(e.message); return false; }
+    finally {
+      saving = false;
+      document.getElementById('saveEditButton').disabled = false;
+      renderData();
+    }
+  }
+
+  function readSlotInput() {
+    return { date: document.getElementById('slotDateInput').value,
+      startTime: document.getElementById('slotStartInput').value,
+      endTime: document.getElementById('slotEndInput').value,
+      status: document.getElementById('slotStatusInput').value,
+      note: document.getElementById('slotNoteInput').value.trim().slice(0, 500) };
+  }
+
+  async function saveSlotEdit() {
+    if (!editingSlot) return;
+    const slot = readSlotInput();
+    if (!AgendaEngine.isRehearsalSlot(slot)) {
+      alert('Confira a data e os horários. O mínimo é 2 horas de ensaio.'); return;
+    }
+    const target = editingSlot;
+    if (await performWrite(() => githubSession.updateSlot(target.issue, target.index, slot))) {
+      editingSlot = null; document.getElementById('recordModal').close();
+    }
   }
 
   function addDraftSlot() {
@@ -540,6 +703,11 @@
 
     if (!AgendaEngine.validateSlot({ date, startTime, endTime, status, note })) {
       alert('Confira a data e os horários. O horário final deve ser posterior ao inicial, no mesmo dia.');
+      return;
+    }
+
+    if (!AgendaEngine.isRehearsalSlot({ date, startTime, endTime, status, note })) {
+      alert('O mínimo é 2 horas de ensaio. Escolha um horário final pelo menos 2 horas após o início.');
       return;
     }
 
@@ -635,6 +803,9 @@
   window.addDraftSlot = addDraftSlot;
   window.submitAvailabilityToGithub = submitAvailabilityToGithub;
   window.refreshAgenda = loadData;
+  window.signInAgenda = signInAgenda;
+  window.signOutAgenda = signOutAgenda;
+  window.saveSlotEdit = saveSlotEdit;
 
   document.addEventListener('DOMContentLoaded', loadData);
 })();

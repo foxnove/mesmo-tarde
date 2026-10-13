@@ -152,7 +152,8 @@
         const durationMinutes = inv.end - inv.start;
         const score = (availCount * 1.0) + (maybeCount * 0.5);
         const percent = Math.round((availCount / totalActive) * 100);
-        const isIdeal = availCount === totalActive;
+        const tooShort = durationMinutes < 120;
+        const isIdeal = availCount === totalActive && !tooShort;
 
         return {
           date: dateStr,
@@ -171,6 +172,7 @@
           totalActiveMembers: totalActive,
           percent,
           score,
+          tooShort,
           isIdeal
         };
       })
@@ -200,6 +202,11 @@
   function cleanSlots(slots) {
     return slots.filter(validateSlot).map(s => ({ date: s.date, startTime: s.startTime,
       endTime: s.endTime, status: s.status || 'available', note: (s.note || '').slice(0, 500) }));
+  }
+
+  function isRehearsalSlot(slot) {
+    return validateSlot(slot) && (slot.status === 'unavailable' ||
+      timeToMinutes(slot.endTime) - timeToMinutes(slot.startTime) >= 120);
   }
 
   // A shared parser keeps the published snapshot and live agenda consistent.
@@ -347,6 +354,7 @@
     formatDateDisplay,
     calculateIntersectionsForDate,
     validateSlot,
+    isRehearsalSlot,
     buildAgendaData,
     parseAvailabilityIssueBody,
     parseConfirmedRehearsalBody

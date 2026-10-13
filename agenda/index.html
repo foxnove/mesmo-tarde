@@ -39,6 +39,16 @@
       <button class="btn-secondary" onclick="refreshAgenda()">Atualizar respostas</button>
     </section>
 
+    <p class="minimum-info"><strong>Mínimo de 2 horas de ensaio.</strong> A estrela ★ indica os 5 integrantes disponíveis por pelo menos 2 horas.</p>
+    <section class="manage-section" aria-label="Meus horários">
+      <div class="manage-header">
+        <div><h2>Meus horários</h2><p id="agendaIdentity">Entre para editar ou apagar seus horários.</p></div>
+        <button id="agendaLoginButton" class="btn-secondary" onclick="document.getElementById('loginModal').showModal()">Entrar com GitHub</button>
+        <button id="agendaLogoutButton" class="btn-secondary" onclick="signOutAgenda()" hidden>Sair</button>
+      </div>
+      <div id="mySlotsContainer" aria-live="polite"></div>
+    </section>
+
     <!-- Confirmed Rehearsals (Only created by foxnove) -->
     <section id="confirmedContainer" class="confirmed-section" style="display: none;"></section>
 
@@ -76,7 +86,7 @@
         Você pode informar várias opções de dia e horário. <strong>Disponibilidade não é ensaio confirmado.</strong> Quem ainda não respondeu não é considerado indisponível. Os registros desta agenda são públicos.
       </p>
       <p style="margin-top: 6px;">
-        <strong>Cadastro atual:</strong> o formulário ainda abre uma confirmação no GitHub. O login e a edição diretamente nesta página ainda não estão disponíveis. Só respostas de integrantes autorizados entram no cálculo.
+        <strong>Seus horários:</strong> novos registros abrem uma confirmação no GitHub. Entre com sua conta para editar ou apagar seus próprios horários diretamente aqui. Só Diego Fox (@foxnove) pode excluir ensaios confirmados. Intervalos disponíveis ou de “talvez” precisam ter pelo menos 2 horas; intervalos de ausência podem ser menores.
       </p>
       <div style="margin-top: 10px;">
         <a href="https://github.com/foxnove/mesmo-tarde/issues?q=is%3Aissue+Disponibilidade" target="_blank" rel="noopener noreferrer" style="color: var(--border-highlight); font-weight: 700; text-decoration: none;">
@@ -90,13 +100,14 @@
   <!-- Modal: Registrar Disponibilidade -->
   <dialog id="recordModal">
     <div class="modal-header">
-      <h3>📅 Registrar Disponibilidade</h3>
+      <h3 id="recordModalTitle">📅 Registrar Disponibilidade</h3>
       <button type="button" class="btn-close" onclick="document.getElementById('recordModal').close()">✕</button>
     </div>
     <div class="modal-body">
       <p style="font-size: 12px; color: var(--text-muted);">
         Adicione os dias e horários em que você tem disponibilidade para ensaio. Você pode incluir múltiplos horários antes de enviar!
       </p>
+      <p class="minimum-info">O mínimo é <strong>2 horas de ensaio</strong>. Horários disponíveis ou “talvez” menores não podem ser salvos.</p>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
         <div class="form-group" style="grid-column: span 2;">
@@ -127,25 +138,46 @@
         <input type="text" id="slotNoteInput" class="form-input" placeholder="Ex: Posso chegar um pouco antes se precisar">
       </div>
 
-      <button type="button" class="btn-secondary" onclick="addDraftSlot()" style="width: 100%; padding: 10px; font-weight: 800;">
+      <button id="addDraftButton" type="button" class="btn-secondary" onclick="addDraftSlot()" style="width: 100%; padding: 10px; font-weight: 800;">
         ➕ Adicionar este Horário à Lista
       </button>
 
-      <div class="form-group" style="margin-top: 6px;">
+      <div id="draftBuilder" class="form-group" style="margin-top: 6px;">
         <label>Horários Selecionados para Envio:</label>
         <div id="draftSlotsList" class="slots-builder-list"></div>
       </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn-secondary" onclick="document.getElementById('recordModal').close()">Cancelar</button>
-      <button type="button" class="btn-primary" onclick="submitAvailabilityToGithub()" style="background: #2563eb;">
+      <button id="submitDraftButton" type="button" class="btn-primary" onclick="submitAvailabilityToGithub()" style="background: #2563eb;">
         🚀 Registrar no GitHub
       </button>
+      <button id="saveEditButton" type="button" class="btn-primary" onclick="saveSlotEdit()" hidden>Salvar alteração</button>
     </div>
+  </dialog>
+
+  <dialog id="loginModal" aria-labelledby="loginTitle">
+    <div class="modal-header">
+      <h3 id="loginTitle">Entrar com GitHub</h3>
+      <button type="button" class="btn-close" aria-label="Fechar" onclick="document.getElementById('githubTokenInput').value = ''; document.getElementById('loginModal').close()">✕</button>
+    </div>
+    <form class="modal-body" onsubmit="event.preventDefault(); signInAgenda()">
+      <p>Use um token pessoal da mesma conta do GitHub com que você registrou sua disponibilidade.</p>
+      <p class="login-help">Para Diego: token com acesso ao repositório <strong>foxnove/mesmo-tarde</strong> e permissão <strong>Issues: leitura e escrita</strong>. Para integrantes sem acesso de colaborador: token clássico com <strong>public_repo</strong>, para editar os registros que vocês mesmos criaram.</p>
+      <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">Criar ou gerenciar meu token no GitHub ↗</a>
+      <div class="form-group">
+        <label for="githubTokenInput">Token pessoal do GitHub</label>
+        <input id="githubTokenInput" type="password" class="form-input" autocomplete="off" spellcheck="false" required>
+      </div>
+      <p class="login-help">O token fica apenas na memória desta página e é enviado somente ao GitHub. Ao sair ou recarregar a página, você precisará entrar novamente.</p>
+      <p id="loginStatus" role="status" aria-live="polite"></p>
+      <button id="signInAgendaButton" type="submit" class="btn-primary">Entrar</button>
+    </form>
   </dialog>
 
   <!-- Core Scripts -->
   <script src="agenda-engine.js"></script>
+  <script src="agenda-github.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
