@@ -17,6 +17,11 @@
     return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
   }
 
+  // An end time of 00:00 means midnight at the end of the selected day.
+  function slotEndMinutes(slot) {
+    return slot.endTime === '00:00' && timeToMinutes(slot.startTime) > 0 ? 1440 : timeToMinutes(slot.endTime);
+  }
+
   function formatDateDisplay(dateStr) {
     if (!dateStr) return '';
     try {
@@ -50,7 +55,7 @@
       const slots = (entry.slots || []).filter(s => s.date === dateStr);
       slots.forEach(slot => {
         const start = timeToMinutes(slot.startTime);
-        const end = timeToMinutes(slot.endTime);
+        const end = slotEndMinutes(slot);
         if (end > start) {
           memberSlotsMap.get(user).push({
             start,
@@ -158,7 +163,7 @@
         return {
           date: dateStr,
           startTime: minutesToTime(inv.start),
-          endTime: minutesToTime(inv.end),
+          endTime: inv.end === 1440 ? '00:00' : minutesToTime(inv.end),
           startMinutes: inv.start,
           endMinutes: inv.end,
           durationMinutes,
@@ -194,7 +199,7 @@
     if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== slot.date) return false;
     const timePattern = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
     if (!timePattern.test(slot.startTime || '') || !timePattern.test(slot.endTime || '')) return false;
-    return timeToMinutes(slot.endTime) > timeToMinutes(slot.startTime) &&
+    return slotEndMinutes(slot) > timeToMinutes(slot.startTime) &&
       ['available', 'maybe', 'unavailable'].includes(slot.status || 'available') &&
       (slot.note === undefined || typeof slot.note === 'string');
   }
@@ -206,7 +211,7 @@
 
   function isRehearsalSlot(slot) {
     return validateSlot(slot) && (slot.status === 'unavailable' ||
-      timeToMinutes(slot.endTime) - timeToMinutes(slot.startTime) >= 120);
+      slotEndMinutes(slot) - timeToMinutes(slot.startTime) >= 120);
   }
 
   // A shared parser keeps the published snapshot and live agenda consistent.

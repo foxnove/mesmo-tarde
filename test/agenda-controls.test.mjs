@@ -73,6 +73,20 @@ test('Admin can open another member slot and save its new time', async () => {
   const updatedRow = get('mySlotsContainer').children.find(n => all(n).some(c => c.textContent.includes('M1 (@m1)')));
   assert.ok(all(updatedRow).some(c => c.textContent.includes('18:00')));
 });
+
+test('Admin can save another member availability from 16:00 until midnight', async () => {
+  const { context, get, all, writes, alerts } = setup();
+  await context.AgendaApp.loadData(); get('githubTokenInput').value = 'test-token'; await context.signInAgenda();
+  const row = get('mySlotsContainer').children.find(n => all(n).some(c => c.textContent.includes('M1 (@m1)')));
+  all(row).find(n => n.textContent === 'Editar').onclick();
+  get('slotStartInput').value = '16:00'; get('slotEndInput').value = '00:00';
+  await context.saveSlotEdit();
+  assert.deepEqual(alerts, []);
+  assert.equal(writes.length, 1);
+  const saved = Engine.parseAvailabilityIssueBody(writes[0].body);
+  assert.equal(saved[0].endTime, '00:00');
+  assert.equal(get('recordModal').open, false);
+});
 test('Short registration alerts without adding a draft; editing saves and updates the displayed time', async () => {
   const { context, get, all, alerts, writes } = setup();
   await context.AgendaApp.loadData();

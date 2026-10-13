@@ -681,8 +681,11 @@
   async function saveSlotEdit() {
     if (!editingSlot) return;
     const slot = readSlotInput();
+    if (!AgendaEngine.validateSlot(slot)) {
+      alert('Confira a data e os horários. O fim deve ser depois do início; 00:00 indica meia-noite no fim do dia.'); return;
+    }
     if (!AgendaEngine.isRehearsalSlot(slot)) {
-      alert('Confira a data e os horários. O mínimo é 2 horas de ensaio.'); return;
+      alert('O mínimo é 2 horas de ensaio. Escolha um intervalo de pelo menos 2 horas.'); return;
     }
     const target = editingSlot;
     if (await performWrite(() => githubSession.updateSlot(target.issue, target.index, slot))) {
@@ -709,7 +712,7 @@
     }
 
     if (!AgendaEngine.validateSlot({ date, startTime, endTime, status, note })) {
-      alert('Confira a data e os horários. O horário final deve ser posterior ao inicial, no mesmo dia.');
+      alert('Confira a data e os horários. O fim deve ser depois do início; 00:00 indica meia-noite no fim do dia.');
       return;
     }
 

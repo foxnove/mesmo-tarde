@@ -22,6 +22,22 @@ test('Available and maybe slots require two hours; absence may be shorter', () =
   assert.equal(Engine.isRehearsalSlot({ ...slot, status: 'maybe', endTime: '20:00' }), false);
   assert.equal(Engine.isRehearsalSlot({ ...slot, status: 'unavailable', endTime: '20:00' }), true);
 });
+
+test('Midnight ends the selected day: 16 to 00 is eight hours and 22 to 00 is two', () => {
+  assert.equal(Engine.isRehearsalSlot({ ...slot, startTime: '16:00', endTime: '00:00' }), true);
+  assert.equal(Engine.isRehearsalSlot({ ...slot, startTime: '22:00', endTime: '00:00' }), true);
+  assert.equal(Engine.isRehearsalSlot({ ...slot, startTime: '22:01', endTime: '00:00' }), false);
+  assert.equal(Engine.validateSlot({ ...slot, startTime: '00:00', endTime: '00:00' }), false);
+});
+
+test('Midnight availability survives parsing and yields an eight-hour intersection', () => {
+  const midnight = { ...slot, startTime: '16:00', endTime: '00:00' };
+  const parsed = Engine.parseAvailabilityIssueBody(Session.body([midnight]));
+  assert.equal(parsed.length, 1);
+  const result = Engine.calculateIntersectionsForDate(slot.date, [{github:'foxnove'}], [{github:'foxnove',slots:parsed}], 5);
+  assert.equal(result[0].durationMinutes, 480);
+  assert.equal(result[0].endTime, '00:00');
+});
 test('A five-member overlap shorter than two hours never gets the perfect marker', () => {
   const band = Array.from({ length: 5 }, (_, i) => ({ github: `m${i}` }));
   const result = Engine.calculateIntersectionsForDate(slot.date, band, band.map(m => ({ github: m.github, slots: [{ ...slot, endTime: '20:59' }] })), 5);

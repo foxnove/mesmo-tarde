@@ -58,6 +58,7 @@
       return '### Minha Disponibilidade de Ensaios\n\n' + lines.join('\n') + '\n\n```json\n' + JSON.stringify(slots, null, 2) + '\n```\n';
     }
     async updateSlot(issue, index, replacement) {
+      if (replacement && !Engine.validateSlot(replacement)) throw new Error('Confira a data e os horários. 00:00 indica meia-noite no fim do dia.');
       if (replacement && !Engine.isRehearsalSlot(replacement)) throw new Error('O mínimo é 2 horas de ensaio. Confira a data e os horários.');
       const fresh = await this.freshIssue(issue);
       const author = (fresh.user?.login || '').toLowerCase();

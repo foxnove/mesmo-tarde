@@ -114,9 +114,9 @@ test('Real mobile browser signs in, edits its own slot, shows a star and blocks 
         if (!document.getElementById('recordModal').open || !document.getElementById('draftBuilder').hidden) throw Error('incorrect edit modal');
         document.getElementById('slotEndInput').value='20:59'; await saveSlotEdit();
         if (!alerts.at(-1).includes('2 horas')) throw Error('missing duration alert');
-        document.getElementById('slotEndInput').value='21:00'; document.getElementById('slotStartInput').value='18:00';
+        document.getElementById('slotEndInput').value='00:00'; document.getElementById('slotStartInput').value='16:00';
         await saveSlotEdit();
-        if (!document.getElementById('mySlotsContainer').textContent.includes('18:00')) throw Error('edit missing');
+        if (!document.getElementById('mySlotsContainer').textContent.includes('16:00 às 00:00')) throw Error('midnight edit missing');
         if (document.getElementById('recordModal').open) throw Error('modal did not close');
         if (document.documentElement.scrollWidth > innerWidth) throw Error('mobile overflow');
         document.body.setAttribute('data-agenda-check','passed');
