@@ -38,11 +38,10 @@ test('Midnight availability survives parsing and yields an eight-hour intersecti
   assert.equal(result[0].durationMinutes, 480);
   assert.equal(result[0].endTime, '00:00');
 });
-test('A five-member overlap shorter than two hours never gets the perfect marker', () => {
+test('A five-member overlap shorter than two hours is not suggested', () => {
   const band = Array.from({ length: 5 }, (_, i) => ({ github: `m${i}` }));
   const result = Engine.calculateIntersectionsForDate(slot.date, band, band.map(m => ({ github: m.github, slots: [{ ...slot, endTime: '20:59' }] })), 5);
-  assert.equal(result[0].isIdeal, false);
-  assert.equal(result[0].tooShort, true);
+  assert.deepEqual(result, []);
 });
 test('Editing one slot preserves the other dates in the issue', async () => {
   assert.ok(Session, 'GitHub agenda session must exist');

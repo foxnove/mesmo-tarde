@@ -252,7 +252,7 @@
         const info = document.createElement('div');
         const dt = document.createElement('div');
         dt.className = 'card-date';
-        dt.textContent = `${w.durationMinutes} minutos de ensaio`;
+        dt.textContent = `${w.durationMinutes} minutos disponíveis para ensaio`;
 
         const tm = document.createElement('div');
         tm.className = 'card-time';
@@ -338,7 +338,7 @@
         if (w.awaitingCount > 0) {
           const awaiting = document.createElement('p');
           awaiting.className = 'awaiting-message';
-          awaiting.textContent = `${w.awaitingCount} integrante${w.awaitingCount === 1 ? '' : 's'} ainda não informou disponibilidade neste intervalo.`;
+          awaiting.textContent = `${w.awaitingCount} integrante${w.awaitingCount === 1 ? '' : 's'} não informou disponibilidade durante todo este intervalo.`;
           card.appendChild(awaiting);
         }
         grid.appendChild(card);
@@ -351,8 +351,8 @@
       const empty = document.createElement('div');
       empty.className = 'empty-state';
       empty.innerHTML = `
-        <h3>Nenhum horário comum calculado ainda</h3>
-        <p>Clique em <strong>"Registrar Disponibilidade"</strong> para adicionar seus dias livres.</p>
+        <h3>Nenhuma opção de pelo menos 2 horas</h3>
+        <p>Informe intervalos de pelo menos 2 horas em <strong>"Registrar Disponibilidade"</strong>.</p>
       `;
       container.appendChild(empty);
     } else {

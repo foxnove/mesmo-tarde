@@ -63,7 +63,7 @@ test('Five actual available musicians get a two-hour ideal window', () => {
   assert.equal(best.availableCount, 5);
 });
 
-test('Interval intersection algorithm matches prompt specification', () => {
+test('Suggestions retain full shared windows and exclude a 90-minute three-member overlap', () => {
   const members = [
     { github: 'foxnove', name: 'Diego', instrument: 'Voz / Violão', active: true },
     { github: 'baixo-fox', name: 'Baixo', instrument: 'Baixo', active: true },
@@ -88,15 +88,15 @@ test('Interval intersection algorithm matches prompt specification', () => {
   const intersections = AgendaEngine.calculateIntersectionsForDate('2026-10-16', members, availability);
   assert.ok(intersections.length > 0);
 
-  // Full attendance still ranks first, but 90 minutes cannot be ideal.
+  // The first two musicians share 150 minutes; the third cannot cover 2 hours.
   const best = intersections[0];
-  assert.equal(best.startTime, '20:00');
-  assert.equal(best.endTime, '21:30');
-  assert.equal(best.availableCount, 3);
+  assert.equal(best.startTime, '19:30');
+  assert.equal(best.endTime, '22:00');
+  assert.equal(best.availableCount, 2);
   assert.equal(best.totalActiveMembers, 3);
-  assert.equal(best.percent, 100);
+  assert.equal(best.percent, 67);
   assert.equal(best.isIdeal, false);
-  assert.equal(best.tooShort, true);
+  assert.equal(best.tooShort, false);
 });
 
 test('Interval calculation handles partial overlaps and maybe status', () => {

@@ -122,35 +122,43 @@
       });
     }
 
-    // Merge consecutive elementary intervals that share the identical member states
-    const merged = [];
-    if (elementaryIntervals.length > 0) {
-      let current = { ...elementaryIntervals[0] };
-
-      for (let i = 1; i < elementaryIntervals.length; i++) {
-        const next = elementaryIntervals[i];
-        const sameAvail = current.availableMembers.length === next.availableMembers.length &&
-          current.availableMembers.every(m => next.availableMembers.some(n => n.github === m.github));
-        const sameMaybe = current.maybeMembers.length === next.maybeMembers.length &&
-          current.maybeMembers.every(m => next.maybeMembers.some(n => n.github === m.github));
-        const sameMissing = current.missingMembers.length === next.missingMembers.length &&
-          current.missingMembers.every(m => next.missingMembers.some(n => n.github === m.github));
-
-        if (sameAvail && sameMaybe && sameMissing) {
-          // Merge
-          current.end = next.end;
-        } else {
-          merged.push(current);
-          current = { ...next };
-        }
+    // Find complete rehearsal options. Someone joining or leaving must not
+    // fragment the longer window still shared by the remaining musicians.
+    const candidates = [];
+    for (let i = 0; i < elementaryIntervals.length; i++) {
+      let definite = new Set(activeMembers.map(m => m.github));
+      let possible = new Set(definite);
+      const absent = new Set();
+      for (let j = i; j < elementaryIntervals.length; j++) {
+        const interval = elementaryIntervals[j];
+        const available = new Set(interval.availableMembers.map(m => m.github));
+        const eligible = new Set([...available, ...interval.maybeMembers.map(m => m.github)]);
+        definite = new Set([...definite].filter(user => available.has(user)));
+        possible = new Set([...possible].filter(user => eligible.has(user)));
+        interval.unavailableMembers.forEach(m => absent.add(m.github));
+        if (!possible.size) break; // No member covers this whole interval.
+        if (interval.end - elementaryIntervals[i].start < 120) continue;
+        candidates.push({
+          start: elementaryIntervals[i].start,
+          end: interval.end,
+          availableMembers: activeMembers.filter(m => definite.has(m.github)),
+          maybeMembers: activeMembers.filter(m => possible.has(m.github) && !definite.has(m.github)),
+          unavailableMembers: activeMembers.filter(m => absent.has(m.github)),
+          missingMembers: activeMembers.filter(m => !possible.has(m.github) && !absent.has(m.github))
+        });
       }
-      merged.push(current);
     }
+
+    // A shorter option adds nothing if a containing option has all its
+    // participants with equal or better certainty. Keep maximal useful windows.
+    const merged = candidates.filter(candidate => !candidates.some(other => other !== candidate &&
+      other.start <= candidate.start && other.end >= candidate.end &&
+      candidate.availableMembers.every(m => other.availableMembers.some(n => n.github === m.github)) &&
+      candidate.maybeMembers.every(m => [...other.availableMembers, ...other.maybeMembers].some(n => n.github === m.github))));
 
     // Filter and compute scores
     const totalActive = Math.max(activeMembers.length, expectedMembers);
     const results = merged
-      .filter(inv => inv.end - inv.start >= 30) // Minimum 30 min block
       .map(inv => {
         const availCount = inv.availableMembers.length;
         const maybeCount = inv.maybeMembers.length;

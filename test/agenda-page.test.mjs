@@ -128,3 +128,27 @@ test('Real mobile browser signs in, edits its own slot, shows a star and blocks 
     assert.match(stdout, /data-agenda-check="passed"/);
   }, bootstrap);
 });
+
+test('Real browser renders full rehearsal options without 30, 60 or 59-minute fragments', async () => {
+  const bootstrap = `<script>
+    const members = ['Dimazz','Rafael','Diego'].map((name,i)=>({github:'m'+i,name,active:true}));
+    const times = [['18:00','23:59'],['19:30','22:00'],['20:00','23:00']];
+    const issues = members.map((m,i)=>({number:i+1,state:'open',user:{login:m.github},title:'Disponibilidade - outubro',labels:[],body:AgendaGithub.body([{date:'2026-10-14',startTime:times[i][0],endTime:times[i][1],status:'available'}])}));
+    window.fetch = async url => {
+      let data = String(url).includes('members.json') ? members : String(url).includes('config.json') ? {expectedMembers:5} : String(url).includes('data.json') ? AgendaEngine.buildAgendaData(members,issues,5) : issues;
+      return new Response(JSON.stringify(data),{status:200});
+    };
+    window.addEventListener('load',()=>setTimeout(async()=>{
+      await refreshAgenda();
+      const cards = Array.from(document.querySelectorAll('.window-card'));
+      const durations = cards.map(c=>parseInt(c.querySelector('.card-date').textContent,10));
+      const ranges = cards.map(c=>c.querySelector('.card-time').textContent);
+      const good = cards.length===4 && durations.every(d=>d>=120) && ranges.includes('19:30 – 22:00') && ranges.includes('20:00 – 23:00');
+      document.body.setAttribute('data-windows-check',good?'passed':JSON.stringify({durations,ranges}));
+    },100));
+  </script>`;
+  await withSite(async port => {
+    const { stdout } = await run(getChromePath(), [...CHROME_FLAGS, `http://127.0.0.1:${port}/agenda/`]);
+    assert.match(stdout, /data-windows-check="passed"/);
+  }, bootstrap);
+});
