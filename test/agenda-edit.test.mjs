@@ -45,9 +45,27 @@ test('Removing one slot preserves the other; removing the last closes the issue'
   await session.updateSlot(f.issue, 0, null);
   assert.equal(f.writes[1].state, 'closed');
 });
-test('Even the admin cannot edit another member availability', async () => {
+test('Admin can edit another member availability while preserving other dates', async () => {
   assert.ok(Session); const f = fixture('foxnove', 'danrdfig-tech'); const session = new Session(f.fetcher);
   await session.login('test-token', members);
+  await session.updateSlot(f.issue, 0, { ...slot, startTime: '18:00' });
+  const slots = Engine.parseAvailabilityIssueBody(f.writes[0].body);
+  assert.equal(slots[0].startTime, '18:00');
+  assert.equal(slots[1].date, '2026-10-30');
+});
+
+test('A regular member cannot edit another member availability', async () => {
+  const f = fixture('danrdfig-tech', 'foxnove'); const session = new Session(f.fetcher);
+  await session.login('test-token', members);
+  await assert.rejects(session.updateSlot(f.issue, 0, slot), /próprios/);
+  assert.equal(f.writes.length, 0);
+});
+
+test('Admin editing permission does not allow deleting other member slots or editing strangers', async () => {
+  const f = fixture('foxnove', 'danrdfig-tech'); const session = new Session(f.fetcher);
+  await session.login('test-token', members);
+  await assert.rejects(session.updateSlot(f.issue, 0, null), /próprios/);
+  f.issue.user.login = 'stranger';
   await assert.rejects(session.updateSlot(f.issue, 0, slot), /próprios/);
   assert.equal(f.writes.length, 0);
 });

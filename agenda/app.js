@@ -566,6 +566,8 @@
     if (!container) return;
     container.innerHTML = '';
     const user = githubSession.user;
+    const admin = user === 'foxnove';
+    document.getElementById('manageSlotsTitle').textContent = admin ? 'Horários da banda' : 'Meus horários';
     document.getElementById('agendaIdentity').textContent = user ? 'Conectado como @' + user : 'Entre para editar ou apagar seus horários.';
     document.getElementById('agendaLoginButton').hidden = !!user;
     document.getElementById('agendaLogoutButton').hidden = !user;
@@ -575,7 +577,9 @@
       return;
     }
     container.textContent = '';
-    const own = liveIssues.filter(i => i.state === 'open' && (i.user?.login || '').toLowerCase() === user && AgendaGithub.isAvailability(i));
+    const registered = new Map(registeredMembers.filter(m => m.active !== false).map(m => [m.github.toLowerCase(), m]));
+    const own = liveIssues.filter(i => i.state === 'open' && AgendaGithub.isAvailability(i) &&
+      ((i.user?.login || '').toLowerCase() === user || (admin && registered.has((i.user?.login || '').toLowerCase()))));
     let count = 0;
     own.forEach(issue => {
       AgendaEngine.parseAvailabilityIssueBody(issue.body).forEach((slot, index) => {
@@ -583,11 +587,14 @@
         const row = document.createElement('div'); row.className = 'my-slot-row';
         const text = document.createElement('span');
         const status = slot.status === 'available' ? 'Disponível' : slot.status === 'maybe' ? 'Talvez' : 'Indisponível';
-        text.textContent = `${AgendaEngine.formatDateDisplay(slot.date)} · ${slot.startTime} às ${slot.endTime} · ${status}${slot.note ? ' · ' + slot.note : ''}`;
+        const author = (issue.user?.login || '').toLowerCase();
+        const member = registered.get(author);
+        text.textContent = `${admin ? `${member?.name || author} (@${author}) · ` : ''}${AgendaEngine.formatDateDisplay(slot.date)} · ${slot.startTime} às ${slot.endTime} · ${status}${slot.note ? ' · ' + slot.note : ''}`;
         row.appendChild(text);
         const actions = document.createElement('div'); actions.className = 'slot-actions';
         actions.appendChild(actionButton('Editar', () => {
           editingSlot = { issue, index }; setEditMode(true);
+          document.getElementById('recordModalTitle').textContent = admin ? `Editar horário · ${member?.name || author}` : 'Editar meu horário';
           document.getElementById('slotDateInput').value = slot.date;
           document.getElementById('slotStartInput').value = slot.startTime;
           document.getElementById('slotEndInput').value = slot.endTime;
@@ -595,14 +602,14 @@
           document.getElementById('slotNoteInput').value = slot.note || '';
           document.getElementById('recordModal').showModal();
         }));
-        actions.appendChild(actionButton('Apagar', async () => {
+        if (author === user) actions.appendChild(actionButton('Apagar', async () => {
           if (!confirm(`Apagar seu horário de ${slot.date}, das ${slot.startTime} às ${slot.endTime}?`)) return;
           await performWrite(() => githubSession.updateSlot(issue, index, null));
         }, 'btn-danger'));
         row.appendChild(actions); container.appendChild(row);
       });
     });
-    if (!count) container.textContent = 'Você ainda não tem horários registrados.';
+    if (!count) container.textContent = admin ? 'A banda ainda não tem horários registrados.' : 'Você ainda não tem horários registrados.';
   }
 
   function setEditMode(editing) {

@@ -54,10 +54,24 @@ test('Five members render a corner star and admin-only delete; login reveals own
   get('githubTokenInput').value = 'test-token';
   await context.signInAgenda();
   assert.ok(all(get('confirmedContainer')).some(n => n.textContent === 'Excluir ensaio'));
-  assert.equal(all(get('mySlotsContainer')).filter(n => n.textContent === 'Editar').length, 1);
+  assert.equal(all(get('mySlotsContainer')).filter(n => n.textContent === 'Editar').length, 5);
+  assert.equal(all(get('mySlotsContainer')).filter(n => n.textContent === 'Apagar').length, 1);
+  assert.equal(get('manageSlotsTitle').textContent, 'Horários da banda');
   assert.equal(get('githubTokenInput').value, '');
   context.signOutAgenda();
   assert.ok(!all(get('confirmedContainer')).some(n => n.textContent === 'Excluir ensaio'));
+});
+
+test('Admin can open another member slot and save its new time', async () => {
+  const { context, get, all, writes } = setup();
+  await context.AgendaApp.loadData(); get('githubTokenInput').value = 'test-token'; await context.signInAgenda();
+  const row = get('mySlotsContainer').children.find(n => all(n).some(c => c.textContent.includes('M1 (@m1)')));
+  assert.ok(row, 'Admin list must identify the member');
+  all(row).find(n => n.textContent === 'Editar').onclick();
+  get('slotStartInput').value = '18:00'; await context.saveSlotEdit();
+  assert.equal(writes.length, 1);
+  const updatedRow = get('mySlotsContainer').children.find(n => all(n).some(c => c.textContent.includes('M1 (@m1)')));
+  assert.ok(all(updatedRow).some(c => c.textContent.includes('18:00')));
 });
 test('Short registration alerts without adding a draft; editing saves and updates the displayed time', async () => {
   const { context, get, all, alerts, writes } = setup();

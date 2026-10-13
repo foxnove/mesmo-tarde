@@ -6,10 +6,11 @@
   class AgendaGithub {
     #token = null;
     #login = null;
+    #memberLogins = new Set();
     #fetch;
     constructor(fetcher = global.fetch.bind(global)) { this.#fetch = fetcher; }
     get user() { return this.#login; }
-    logout() { this.#token = null; this.#login = null; }
+    logout() { this.#token = null; this.#login = null; this.#memberLogins.clear(); }
     async login(token, members) {
       this.logout();
       if (!token.trim()) throw new Error('Informe seu token do GitHub.');
@@ -22,6 +23,7 @@
       if (!members.some(m => m.active !== false && m.github.toLowerCase() === login))
         throw new Error('Esta conta não está cadastrada como integrante da banda.');
       this.#token = token.trim(); this.#login = login;
+      this.#memberLogins = new Set(members.filter(m => m.active !== false).map(m => m.github.toLowerCase()));
       return login;
     }
     async request(url, options = {}) {
@@ -58,7 +60,9 @@
     async updateSlot(issue, index, replacement) {
       if (replacement && !Engine.isRehearsalSlot(replacement)) throw new Error('O mínimo é 2 horas de ensaio. Confira a data e os horários.');
       const fresh = await this.freshIssue(issue);
-      if (!AgendaGithub.isAvailability(fresh) || fresh.user?.login.toLowerCase() !== this.user)
+      const author = (fresh.user?.login || '').toLowerCase();
+      const adminEdit = this.user === 'foxnove' && replacement && this.#memberLogins.has(author);
+      if (!AgendaGithub.isAvailability(fresh) || (author !== this.user && !adminEdit))
         throw new Error('Você só pode editar ou apagar seus próprios horários.');
       const slots = Engine.parseAvailabilityIssueBody(fresh.body);
       if (!Number.isInteger(index) || index < 0 || index >= slots.length) throw new Error('Horário não encontrado. Atualize a agenda.');

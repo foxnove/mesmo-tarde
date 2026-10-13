@@ -42,7 +42,7 @@
     <p class="minimum-info"><strong>Mínimo de 2 horas de ensaio.</strong> A estrela ★ indica os 5 integrantes disponíveis por pelo menos 2 horas.</p>
     <section class="manage-section" aria-label="Meus horários">
       <div class="manage-header">
-        <div><h2>Meus horários</h2><p id="agendaIdentity">Entre para editar ou apagar seus horários.</p></div>
+        <div><h2 id="manageSlotsTitle">Meus horários</h2><p id="agendaIdentity">Entre para editar ou apagar seus horários.</p></div>
         <button id="agendaLoginButton" class="btn-secondary" onclick="document.getElementById('loginModal').showModal()">Entrar com GitHub</button>
         <button id="agendaLogoutButton" class="btn-secondary" onclick="signOutAgenda()" hidden>Sair</button>
       </div>
@@ -86,7 +86,7 @@
         Você pode informar várias opções de dia e horário. <strong>Disponibilidade não é ensaio confirmado.</strong> Quem ainda não respondeu não é considerado indisponível. Os registros desta agenda são públicos.
       </p>
       <p style="margin-top: 6px;">
-        <strong>Seus horários:</strong> novos registros abrem uma confirmação no GitHub. Entre com sua conta para editar ou apagar seus próprios horários diretamente aqui. Só Diego Fox (@foxnove) pode excluir ensaios confirmados. Intervalos disponíveis ou de “talvez” precisam ter pelo menos 2 horas; intervalos de ausência podem ser menores.
+        <strong>Seus horários:</strong> novos registros abrem uma confirmação no GitHub. Entre com sua conta para editar ou apagar seus próprios horários diretamente aqui. Diego Fox (@foxnove) também pode editar os horários de todos os integrantes e excluir ensaios confirmados. Intervalos disponíveis ou de “talvez” precisam ter pelo menos 2 horas; intervalos de ausência podem ser menores.
       </p>
       <div style="margin-top: 10px;">
         <a href="https://github.com/foxnove/mesmo-tarde/issues?q=is%3Aissue+Disponibilidade" target="_blank" rel="noopener noreferrer" style="color: var(--border-highlight); font-weight: 700; text-decoration: none;">
