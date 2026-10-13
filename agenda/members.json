@@ -26,5 +26,12 @@
     "instrument": "",
     "active": true,
     "admin": false
+  },
+  {
+    "github": "allanvillas-sudo",
+    "name": "Allan",
+    "instrument": "",
+    "active": true,
+    "admin": false
   }
 ]
