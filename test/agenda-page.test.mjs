@@ -30,8 +30,8 @@ async function withSite(check, bootstrap = '') {
       // Keep browser checks deterministic: exercise the real snapshot fallback,
       // without depending on GitHub availability or API rate limits.
       if (pathname === '/agenda/') {
-        content = Buffer.from(content.toString().replace('<script src="agenda-engine.js">',
-          `<script>const originalFetch = window.fetch; window.fetch = (url, options) => String(url).startsWith('https://api.github.com/') ? Promise.resolve(new Response('', {status:503})) : originalFetch(url, options);</script><script src="agenda-engine.js">`)
+        content = Buffer.from(content.toString().replace(/<script src="agenda-engine\.js[^\"]*">/,
+          match => `<script>const originalFetch = window.fetch; window.fetch = (url, options) => String(url).startsWith('https://api.github.com/') ? Promise.resolve(new Response('', {status:503})) : originalFetch(url, options);</script>` + match)
           .replace('</body>', bootstrap + '</body>'));
       }
       if (pathname === '/agenda/data.json') {
@@ -106,7 +106,10 @@ test('Real mobile browser signs in, edits its own slot, shows a star and blocks 
         document.getElementById('loginModal').showModal();
         document.getElementById('githubTokenInput').value = 'test-token';
         await signInAgenda();
-        const edit = Array.from(document.querySelectorAll('#mySlotsContainer button')).find(b=>b.textContent==='Editar');
+        if (document.getElementById('manageSlotsTitle').textContent !== 'Horários da banda') throw Error('missing admin heading');
+        const memberRow = Array.from(document.querySelectorAll('#mySlotsContainer .my-slot-row')).find(row=>row.textContent.includes('M1 (@m1)'));
+        if (!memberRow) throw Error('missing other member');
+        const edit = Array.from(memberRow.querySelectorAll('button')).find(b=>b.textContent==='Editar');
         edit.click();
         if (!document.getElementById('recordModal').open || !document.getElementById('draftBuilder').hidden) throw Error('incorrect edit modal');
         document.getElementById('slotEndInput').value='20:59'; await saveSlotEdit();
