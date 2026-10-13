@@ -19,5 +19,12 @@
     "instrument": "",
     "active": true,
     "admin": false
+  },
+  {
+    "github": "alencarrafael",
+    "name": "Rafael",
+    "instrument": "",
+    "active": true,
+    "admin": false
   }
 ]
